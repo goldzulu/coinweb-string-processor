@@ -1,20 +1,32 @@
 module.exports = {
   root: true,
   env: { browser: true, es2020: true },
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:react-hooks/recommended',
-    'plugin:prettier/recommended',
-    'prettier',
-  ],
+  extends: ['eslint:recommended', 'plugin:react-hooks/recommended', 'plugin:prettier/recommended', 'prettier'],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
-  parser: '@typescript-eslint/parser',
   plugins: ['react-refresh', 'prettier'],
+  parser: '@typescript-eslint/parser',
+  overrides: [
+    {
+      files: ['*.tsx', '*.ts'],
+      parser: '@typescript-eslint/parser',
+      extends: ['plugin:@typescript-eslint/recommended'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'warn',
+      },
+    },
+    {
+      files: ['*.mdx'],
+      parser: 'eslint-mdx',
+      parserOptions: {
+        extensions: '[*.mdx]',
+      },
+      extends: ['plugin:react/recommended', 'plugin:mdx/recommended'],
+    },
+  ],
   rules: {
     'prettier/prettier': 2,
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-    '@typescript-eslint/no-explicit-any': 'warn',
     'react-hooks/exhaustive-deps': 'off',
+    'no-console': 'warn',
   },
 };

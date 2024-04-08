@@ -1,12 +1,30 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite';
+import mdx from '@mdx-js/rollup';
 import react from '@vitejs/plugin-react';
 import wasm from 'vite-plugin-wasm';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import rehypeHighlight from 'rehype-highlight';
+
+import json from 'highlight.js/lib/languages/json';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   build: { target: 'esnext' },
-  plugins: [react(), wasm()],
+  plugins: [
+    mdx({ rehypePlugins: [[rehypeHighlight, { languages: { json } }]] }),
+    react(),
+    wasm(),
+    nodePolyfills({
+      globals: {
+        Buffer: true, // can also be 'build', 'dev', or false
+        global: true,
+        process: true,
+      },
+      include: ['events', 'buffer', 'crypto', 'stream', 'vm'],
+    }),
+  ],
+
   server: {
     port: 3000,
   },
