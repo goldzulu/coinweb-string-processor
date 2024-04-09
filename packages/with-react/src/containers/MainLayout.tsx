@@ -1,9 +1,11 @@
-import { Layout, Menu, Col, Row, theme } from 'antd';
+import { Layout, Menu, Col, Row, theme, Button, Divider } from 'antd';
+import { ArrowRightOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Outlet } from 'react-router-dom';
 import { useStringReverserSmartContract } from '../hooks/useStringReverserSmartContract';
 import useNavLinks from '../hooks/useNavLinks';
 import reactLogo from '../assets/react.svg';
 import coinwebLogo from '../assets/coinweb-logo.svg';
+import useScrollToTop from '../hooks/useScrollToTop';
 
 const { Header, Content, Footer } = Layout;
 
@@ -12,7 +14,9 @@ const MainLayout = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const { items: navLinks, activeKey } = useNavLinks();
+  useScrollToTop();
+
+  const { items: navLinks, activeItem, previousItem, nextItem } = useNavLinks();
 
   const { contractId: stringReverserContractId } = useStringReverserSmartContract();
 
@@ -35,20 +39,22 @@ const MainLayout = () => {
         <a href="https://react.dev" target="_blank" rel="noopener nofollow noreferrer">
           <img src={reactLogo} className="logo" alt="React logo" />
         </a>
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          items={navLinks}
-          selectedKeys={[activeKey]}
-          style={{ flex: 1, minWidth: 0 }}
-        />
       </Header>
       <Content style={{ padding: '24px 48px 0' }}>
         <Row gutter={16} justify="center">
           <Col xs={24} md={24} lg={24} xl={18} xxl={14}>
+            <Menu
+              mode="horizontal"
+              items={navLinks}
+              selectedKeys={[activeItem.key]}
+              style={{ flex: 1, background: colorBgContainer, borderRadius: borderRadiusLG }}
+            />
+          </Col>
+          <Col xs={24} md={24} lg={24} xl={18} xxl={14}>
             <div
               style={{
-                padding: '24px 48px',
+                marginTop: '24px',
+                padding: '48px 48px 24px',
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden',
@@ -58,6 +64,25 @@ const MainLayout = () => {
               }}
             >
               <Outlet />
+
+              <Divider />
+
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div>
+                  {previousItem && (
+                    <Button type="text" onClick={previousItem.onClick} icon={<ArrowLeftOutlined />}>
+                      {previousItem.label}
+                    </Button>
+                  )}
+                </div>
+                <div>
+                  {nextItem && (
+                    <Button type="primary" onClick={nextItem.onClick}>
+                      {nextItem.label} <ArrowRightOutlined />
+                    </Button>
+                  )}
+                </div>
+              </div>
             </div>
           </Col>
         </Row>

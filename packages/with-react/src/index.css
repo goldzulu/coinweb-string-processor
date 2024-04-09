@@ -23,6 +23,10 @@ h1 {
   margin-top: 0;
 }
 
+p {
+  margin: 10px 0;
+}
+
 .logo {
   height: 1.6em;
   vertical-align: middle;
@@ -37,10 +41,13 @@ h1 {
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
-
 .hljs {
   border-radius: 10px;
   padding: 14px;
   overflow: auto;
   box-sizing: content-box;
+}
+
+.appollo-ide-explorer iframe {
+  min-height: 500px;
 }

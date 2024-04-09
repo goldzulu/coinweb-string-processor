@@ -1,0 +1,140 @@
+# String-reverser contract module
+
+Traditionally the reactive smart contract is divided in th onchain and offchain
+part. The onchain part is the smart contract itself, which is deployed on the
+Coinweb network. The offchain part is the client side (or server side) code,
+which interacts with the smart contract. The offchain part is not deployed on
+the Coinweb network nor any blockchain, but runs on the dApp's side or its
+ecosystem. The offchain part can provide an API for the user interface etc.
+
+## Onchain.js
+
+Let's take a look at the onchain part of the string-reverser smart contract
+module. As the name suggests, the onchain part should be written in Javascript
+(Typescript) and is supposed to reverse a string. Our main goal therefore is to
+create a reactive smart contract that receives a string, processes it by
+reversing it and finally saving it in Coinweb's claims DB.
+
+With the help of a templating system provided by the `@coinweb/contract-kit`
+SDK, we can compose the onchain part to achieve our goal in a few steps/lines of
+code.
+
+### 1: Write the string processor function
+
+The following function receives any amount of strings or any amount of arrays of
+strings as arguments, flattens them, reverses each string and finally joins them
+back together into a single string.
+
+```ts
+function stringReverser(...stringsToReverse: string[]): string {
+  return stringsToReverse
+    .flat(Infinity)
+    .map((str) => str.split('').reverse().join(''))
+    .join(' ');
+}
+```
+
+### 2: Write the default contract handler function
+
+The default handler function (in this case we call it the `logic` function) is
+the main/default entry point for the contract invocation. It receives a context
+argument containing details about the transaction, provided CWEBs for subsequent
+transactions (if any), the transaction itself, the provided arguments (if any),
+etc.
+
+In our case we extract Coinweb's smart contract ID and the provided arguments
+from the context. Followed by some argument validation, we create a continuation
+transaction which composes a generic `StoreOp` claim. The StoreOp as implicated
+stores the claim in Coinweb's claims DB. After a successful invocation the
+stored claim will be readable from the "outside world". All templating helpers
+can are imported from `@coinweb/contract-kit`.
+
+The `getMethodArguments` part will be explained later in this tutorial.
+
+```ts
+function logic(context: Context): NewTx[] {
+  const { tx } = context;
+  const contractId = getContractId(tx);
+
+  const [firstPart, secondPart, body] = getMethodArguments(context).slice(1);
+
+  if (typeof firstPart !== 'string') {
+    throw new Error('Invalid arguments, first key part must be a string');
+  }
+
+  if (Array.isArray(body)) {
+    if (body.length < 1) {
+      throw new Error(
+        'Invalid arguments, body must be an array and contain at least one string to reverse'
+      );
+    }
+
+    if (body.some((arg) => typeof arg !== 'string')) {
+      throw new Error(
+        'Invalid arguments, body array must be composed of strings'
+      );
+    }
+  } else if (typeof body !== 'string') {
+    throw new Error(
+      'Invalid arguments, body must be a string or an array of strings'
+    );
+  }
+
+  return [
+    continueTx([
+      passCwebFrom(contractIssuer(contractId), 200),
+      store(
+        genericClaim(
+          claimKey(firstPart, secondPart),
+          Array.isArray(body) ? stringReverser(...body) : stringReverser(body),
+          toHex(0)
+        )
+      ),
+    ]),
+  ];
+}
+```
+
+### 3: Write the register function
+
+The final step is to define the contract's registration step. We create a
+`cwebMain` function by convention, which is the entry point for the contract
+module deployment. Starting with an empty module object, we add the
+`DEFAULT_HANDLER_NAME` as the convention for the default contract handler. We
+can also use any other additional handlers with several other provided. Later in
+this tutorial we will extend the onchain logic.
+
+The second handler is as well a generic internal convention, the
+`SELF_REGISTER_HANDLER_NAME`, which is the default way for registering Coinweb
+smart contracts. During the registration useLinkClickHandler, if the
+`SELF_REGISTER_HANDLER_NAME` is provided, the contract will be registered with
+the provided handler, in this case another default `selfRegisterHandler`
+imported from `@coinweb/self-register` SDK.
+
+```ts
+export function cwebMain() {
+  const module: ContractHandlers = { handlers: {} };
+  addMethodHandler(module, DEFAULT_HANDLER_NAME, logic);
+  addMethodHandler(module, SELF_REGISTER_HANDLER_NAME, selfRegisterHandler);
+  executeHandler(module);
+}
+```
+
+That is all we need for the onchain part of the string-reverser smart contract
+module.
+
+You can find the full code under `packages/string-reverser.cm/src/onchain.ts`.
+
+The onchain part is not per se limited, but the bigger the file size the more
+gas will be needed in order to publish and store it on the Coinweb network.
+
+## Offchain.js
+
+The offchain code is the the part of the smart contract that is not deployed on
+Coinweb. Generally the offchain code provides ways to interact with the smart
+contract. Nevertheless the smart contract depends on the offchain code as its
+reference is used while creating a hash (=contract_id) of the contract. Meaning
+changes to the offchain code will result in a new contract_id and therefore in a
+new smart contract that will have to be redeployed.
+
+The offchain part will be explained part by part in the upcoming sections.

@@ -8,6 +8,15 @@ const config = {
   printWidth: 120,
   trailingComma: 'es5',
   endOfLine: 'auto',
+  overrides: [
+    {
+      files: ['*.mdx', '*.md'],
+      options: {
+        printWidth: 80,
+        proseWrap: 'always',
+      },
+    },
+  ],
 };
 
 export default config;

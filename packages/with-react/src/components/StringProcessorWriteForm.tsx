@@ -5,20 +5,17 @@ import type { CustomUiCommand } from '@coinweb/wallet-lib';
 import CoinwebClaim from './CoinwebClaim';
 import HighlightCodeBlock from './HighlightCodeBlock';
 import { useStringReverserSmartContract } from '../hooks/useStringReverserSmartContract';
+import { EMPTY_CLAIM } from '../constants';
 
 function InputLabel() {
   return <>Enter a string that you want to be processed by your reactive smart contract</>;
 }
 
-const EMPTY_CLAIM = {
-  handler: 'DEFAULT',
-  firstKey: '',
-  secondKey: '',
-  body: '',
-};
-
 function StringProcessorWriteForm() {
-  const [claimPreview, setClaimPreview] = useState<FetchedClaim & { handler: string }>(EMPTY_CLAIM);
+  const [claimPreview, setClaimPreview] = useState<FetchedClaim & { handler: string }>({
+    ...EMPTY_CLAIM,
+    handler: 'DEFAULT',
+  });
   const [callOpPreview, setCallOpPreview] = useState<CustomUiCommand | null>(null);
   const { generateCallOp, isLoading } = useStringReverserSmartContract();
   const [stringToBeProcessed, setStringToBeProcessed] = useState<string>('');
@@ -38,7 +35,7 @@ function StringProcessorWriteForm() {
         }
       });
     } else {
-      setClaimPreview(EMPTY_CLAIM);
+      setClaimPreview({ ...EMPTY_CLAIM, handler: 'DEFAULT' });
     }
   };
 

@@ -1,11 +1,10 @@
-import { Descriptions, Spin } from 'antd';
+import { Descriptions, Tag } from 'antd';
 import { ReactElement } from 'react';
 import type { FetchedClaim } from 'string-reverser.cm';
 
 const CoinwebClaim = ({
   claim,
   label,
-  isLoading,
   fallback = null,
 }: {
   claim: (FetchedClaim & { handler?: string }) | null;
@@ -15,9 +14,7 @@ const CoinwebClaim = ({
 }) => {
   return (
     <div style={{ width: '100%' }}>
-      {isLoading ? (
-        <Spin />
-      ) : claim ? (
+      {claim ? (
         <Descriptions bordered title={label || 'Fetched Claim'} layout="horizontal">
           {claim.handler ? (
             <Descriptions.Item span={3} label="Method Handler">
@@ -25,13 +22,13 @@ const CoinwebClaim = ({
             </Descriptions.Item>
           ) : null}
           <Descriptions.Item span={3} label="First Key">
-            {claim.firstKey}
+            {claim.firstKey || <Tag color="default">empty</Tag>}
           </Descriptions.Item>
           <Descriptions.Item span={3} label="Second Key">
-            {claim.secondKey}
+            {claim.secondKey || <Tag color="default">empty</Tag>}
           </Descriptions.Item>
           <Descriptions.Item span={3} label="Body">
-            {claim.body}
+            {claim.body || <Tag color="default">empty</Tag>}
           </Descriptions.Item>
         </Descriptions>
       ) : (

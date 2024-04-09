@@ -1,0 +1,74 @@
+import { useState, useEffect } from 'react';
+import { ApolloExplorer } from '@apollo/explorer/react';
+import { getContractId } from 'string-reverser.cm';
+
+# Read a claim from Coinweb directly via GraphQL
+
+As already mentioned in the previous section the `@coinweb/wallet-lib` is only a
+wrapper for the publicly available Coinweb GraphQL API. This means that you can
+also access the stored claims directly via GraphQL. Below is the same read
+operation, as explained in our offchain code with the `@coinweb/wallet-lib`,
+formulated as a GraphQL query.
+
+## Embedded GraphQL IDE
+
+When you run the predefined query below (with the correct `first key` set), you
+should see your expected result stored in the response body.
+
+{/* prettier-ignore-start */}
+
+<div style={{ borderRadius: "10px", overflow: "hidden" }}>
+  {(() => {
+    const App = () => {
+      const [contractId, setContractId] = useState();
+      useEffect(() => {
+        getContractId().then((id) => setContractId(id));
+      }, []);
+
+      const claimFilterQuery = `query {
+  shard(name: DEVNET_L1A) {
+    fetchClaimsStable(
+      claimFilters: {
+        issuer: { FromSmartContract: "${contractId}" }
+        keyFirstPart: "TUTORIAL"
+      }
+      offset: "0"
+      maxClaimsToReturn: "10"
+    ) {
+      claim {
+        issuer
+        content {
+          key
+          body
+        }
+      }
+    }
+  }
+}`;
+
+      if (!contractId) return null;
+
+      return (
+        <ApolloExplorer
+          className="appollo-ide-explorer"
+          graphRef="acephei@current"
+          endpointUrl={window.__API_URL__}
+          initialState={{
+            document: claimFilterQuery,
+            displayOptions: {
+              showHeadersAndEnvVars: false,
+              showGlobalHeader: false,
+              docsPanelState: "closed",
+              theme: "light",
+            },
+          }}
+        />
+      );
+    };
+
+    return <App />;
+  })()}
+</div>
+
+
+{/* prettier-ignore-end */}

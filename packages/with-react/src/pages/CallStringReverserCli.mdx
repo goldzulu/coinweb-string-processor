@@ -1,0 +1,96 @@
+# Call the string-reverser.cm from cli
+
+At this point we have created a smart getContractId, wrote the onchain.js code
+and deployed the contract. Now we can call the contract from the cli. This
+section is very similar to the
+[getting started section](https://docs.coinweb.io/gettingstarted) in our
+official docs. Therefore we will not go into detail here, but cover the most
+important parts.
+
+What we want to achieve in this step is to invoke the smart contract in Coinweb,
+which means we will call the `stringReverse` function of the contract with a set
+of provided strings. In the end we expect to receive the reversed version of our
+input back.
+
+This will not happen in a `Request-Response` pattern as we are used to from eg.
+HTTP requests. Instead we will embed a transaction in Coinweb and wait for it to
+succeed, which will execute a StoreOp and therefore write a claim with the
+result to Coinweb's claims DB. Afterwards we will be able to read the result as
+often as we want. Think of it more as a CQRS
+(command-query-responsibility-segregation) pattern.
+
+## Providing arguments
+
+The most significant part of this contract compared to the `hello-world` example
+is the ability to provide arguments. Here we will start with the easiest way to
+do so, which is by hardcoding the arguments into YAML call config file of the
+contract.
+
+### YAML call config
+
+Under `packages/string-reverser.cm/deploy/calls.yaml.template` you will find a
+generic template for the call config file of the string-reverser contract
+module.
+
+The `calls.yaml.template` looks like this:
+
+```yaml
+# this is the contract id placeholder
+__CWEB_CONTRACT_SELF_REFERENCE__:
+  args: {}
+  cweb_provided: 80000
+  auth: false
+```
+
+The `__CWEB_CONTRACT_SELF_REFERENCE__` is a placeholder for the actual contract
+id and the args part is at this point an empty object. This template is being
+used in order to create the actual `.calls-package.yaml` file. This generated
+file will be picked up by the cweb-tool shortly before executing the smart
+contract invocation.
+
+In order to provide arguments we can alter the `args` part. The provided
+arguments must be composed in a list that follows a strict order which goes as
+follows:
+
+1. Handler that we want to execute, in our case the `DEFAULT_HANDLER_NAME`
+2. First key part
+3. Second key part
+4. Body or general arguments
+
+The `calls.yaml.template` file should be altered to look like this:
+
+```yaml
+# this is the contract id placeholder
+__CWEB_CONTRACT_SELF_REFERENCE__:
+  args:
+    - 'DEFAULT' <- Method handler we want to invoke
+    - 'TUTORIAL' <- first key
+    - 1712587111423 <- second key, this is a timestamp
+    - 'STRING WE WANT TO REVERSE' <- this is the string we want to reverse
+  cweb_provided: 80000
+  auth: false
+```
+
+As you may remember in our logic function we access the arguments from context
+with the `getMethodArguments` function, whereby the first argument is sliced as
+it is reserved for the method handler name.
+
+```ts
+// ...
+const [firstPart, secondPart, body] = getMethodArguments(context).slice(1);
+// ...
+```
+
+### Executing the call
+
+In order to execute the call we need to run the following prepared scripts, that
+will utilise `@coinweb/cweb-tool` and execute the contract call:
+
+```bash
+cd packages/string-reverser.cm
+yarn call-contract
+
+# "call-contract": "yarn call-contract:prepare && yarn call-contract:invoke",
+# "call-contract:prepare": "./scripts/make-single-call.sh",
+# "call-contract:invoke": "cweb-tool call deploy/calls.yaml ../../.cweb-config/mnemonic.txt DEVNET_L1A https://api-devnet.coinweb.io/wallet",
+```

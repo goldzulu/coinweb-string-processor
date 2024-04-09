@@ -1,0 +1,92 @@
+import StringProcessorSearchInput from '../components/StringProcessorSearchInput';
+
+# Read a claim from Coinweb using @coinweb/wallet-lib
+
+Now that we have written the claim to DB by calling our contract with arguments,
+we can read it. Coinweb offers a house intern library, called
+`@coinweb/wallet-lib`, that wraps the GraphQL API and provides a simple
+interface to interact with it. Go ahead and try to find your claim using the
+input below. It expects you to provide the first key of the claim.
+
+<StringProcessorSearchInput />
+
+The body of the fetched claim should equal the expected result of your contract
+call, which in our case is the reversed string.
+
+## Offchain code
+
+The fetching happens in our offchain code, which is located in the
+`src/offchain` directory. The `api.ts` wraps the `@coinweb/wallet-lib` and
+provides a function to fetch claims from the network.
+
+```ts
+// src/offchain/api.ts
+
+const DEV_COINWEB_ENDPOINT =
+  typeof window === 'undefined'
+    ? process.env.API_ENDPOINT_DEVNET
+    : window.__API_URL__;
+const cwebWalletNode = CwebWallet.connect_to_node(DEV_COINWEB_ENDPOINT);
+/**
+ * Fetches a Coinweb claim from the network utilising the @coinweb/wallet-lib
+ *
+ * @param {claimFilters[]} claimFilters The array of filters to apply to the claim(s) to fetch
+ * @returns {Promise<ClaimsResponse>} The claim(s) that was fetched
+ */
+export const fetchClaims = async (claimFilters) => {
+  const networkToClaimFrom = NetworkName.DEVNET_L1A;
+  const loadAllPages = true;
+  try {
+    const fetchedClaims = await CwebWallet.fetch_claims(
+      cwebWalletNode,
+      claimFilters,
+      networkToClaimFrom,
+      loadAllPages
+    );
+    return { result: fetchedClaims, status: 'success' };
+  } catch (error) {
+    return { result: error, status: 'error' };
+  }
+};
+```
+
+The `index.ts` file contains the function that calls the sample api.
+
+```ts
+// src/offchain/index.ts
+
+export const readClaim = async (input: string): Promise<FetchedClaim> => {
+  const inputArray = Array.isArray(input) ? input : [input];
+  const firstKeyPart = inputArray.flat(Infinity).join(' ');
+
+  return api
+    .fetchClaims([
+      {
+        issuer: { FromSmartContract: constants.contractId },
+        keyFirstPart: firstKeyPart,
+        keySecondPart: null,
+        startsAtKeySecondPart: null,
+        endsAtKeySecondPart: null,
+      },
+    ] as GqlClaimFilter[])
+    .then((claimsResponse) => {
+      if (claimsResponse.status === 'error') {
+        throw new Error('Failed to fetch claims from the network.');
+      }
+
+      if (claimsResponse.status === 'success') {
+        const [fetchedClaim] = claimsResponse.result as IssuedClaim[];
+
+        if (fetchedClaim?.content?.body && fetchedClaim?.content?.key) {
+          return {
+            body: fetchedClaim.content.body as string,
+            firstKey: fetchedClaim.content.key.first_part,
+            secondKey: fetchedClaim.content.key.second_part,
+          };
+        }
+
+        throw new Error('Claim not found.');
+      }
+    });
+};
+```

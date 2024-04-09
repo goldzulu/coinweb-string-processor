@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   env: { browser: true, es2020: true },
-  extends: ['eslint:recommended', 'plugin:react-hooks/recommended', 'plugin:prettier/recommended', 'prettier'],
+  extends: ['eslint:recommended', 'plugin:react-hooks/recommended', 'prettier'],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   plugins: ['react-refresh', 'prettier'],
   parser: '@typescript-eslint/parser',
@@ -19,6 +19,9 @@ module.exports = {
       parser: 'eslint-mdx',
       parserOptions: {
         extensions: '[*.mdx]',
+      },
+      settings: {
+        'mdx/code-blocks': false,
       },
       extends: ['plugin:react/recommended', 'plugin:mdx/recommended'],
     },

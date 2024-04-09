@@ -13,7 +13,7 @@ const useNavLinks = () => {
       if (idx === 0) {
         return {
           key: 'Start',
-          label: 'Start',
+          label: 'START',
           onClick: () => navigate('/'),
         };
       }
@@ -21,27 +21,32 @@ const useNavLinks = () => {
       if (idx === routesCount - 1) {
         return {
           key: 'End',
-          label: 'End',
+          label: 'END',
           onClick: () => navigate('/'.concat(kebabCase(routeKey))),
         };
       }
 
       return {
         key: routeKey,
-        label: `Step${idx}`,
+        label: `Step ${idx}`,
         onClick: () => navigate('/'.concat(kebabCase(routeKey))),
       };
     })
   );
 
-  const activeKey = navLinkItems.find((i) => {
+  const activeRouteIndex = navLinkItems.findIndex((i, idx) => {
     const pathname = location.pathname.replace('/', '');
 
     if (!pathname) return i.key === 'Start';
+    if (idx === navLinkItems.length - 1) return i.key === 'End';
     return kebabCase(i.key) === pathname;
-  })?.key;
+  });
 
-  return { items: navLinkItems, activeKey };
+  const activeItem = navLinkItems[activeRouteIndex];
+  const nextItem = navLinkItems[activeRouteIndex + 1] || null;
+  const previousItem = navLinkItems[activeRouteIndex - 1] || null;
+
+  return { items: navLinkItems, activeItem, previousItem, nextItem };
 };
 
 export default useNavLinks;

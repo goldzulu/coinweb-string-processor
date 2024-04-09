@@ -1,0 +1,54 @@
+# Create a React Smart Contract
+
+The _create_ step involves writing the code for the reactive smart contract.
+This includes defining the contract, its onchain and offchain code, and any
+interfaces it may emit. In this tutorial we will concentrate on Javascript
+(Typescript) only. In order to create this tutorial dApp you can easily make use
+of the create coinweb-dapp. In-depth explanations can be found on
+[docs.coinweb.io](https://docs.coinweb.io/).
+
+```bash
+YARN_REGISTRY=https://npm.coinweb.io yarn create coinweb-dapp string-processor
+```
+
+During the prompt process you can select the `string-processor-tutorial`
+template.
+
+```bash
+...
+cweb-tool: What template to clone (git repo url or example)?: string-processor-tutorial
+```
+
+Alternatively you can clone the publiv repository directly:
+
+```bash
+git clone https://gitlab.com/coinweb/ccd-examples/string-reverser-simple.git
+```
+
+After the repository was copied your project structure should look like this:
+
+```bash
+my-dapp
+├── .cweb_tool
+├── .cweb-config
+│  ├── calls.yaml.template
+│  ├── cweb-pack.yaml
+│  ├── dapp-ecosystem.yaml
+│  └── mnemonic.txt
+├── package.json
+└── packages
+   ├── dapp-ui (or with-react if cloned)
+   ├── string-reverser.cm
+   └── string-camel.cm
+
+```
+
+As the final creation step you need to install the dependencies and build the
+project:
+
+```bash
+yarn install && yarn build
+```
+
+All smart contracts are located in the `packages` directory under the `*.cm`
+naming convention.
