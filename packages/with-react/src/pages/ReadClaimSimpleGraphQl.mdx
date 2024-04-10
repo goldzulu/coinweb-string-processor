@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { ApolloExplorer } from '@apollo/explorer/react';
-import { getContractId } from 'string-reverser.cm';
+import { getContractId, STRING_PROCESSOR_TABLE } from 'string-processor.cm';
 
-# Read a claim from Coinweb directly via GraphQL
+# Read a Claim from Coinweb Directly via GraphQL
 
 As already mentioned in the previous section the `@coinweb/wallet-lib` is only a
 wrapper for the publicly available Coinweb GraphQL API. This means that you can
@@ -12,8 +12,9 @@ formulated as a GraphQL query.
 
 ## Embedded GraphQL IDE
 
-When you run the predefined query below (with the correct `first key` set), you
-should see your expected result stored in the response body.
+When you run the predefined query below (with the correct `contract id`,
+`first key` and `second key` set), you should see your expected result stored in
+the response body.
 
 {/* prettier-ignore-start */}
 
@@ -30,12 +31,13 @@ should see your expected result stored in the response body.
     fetchClaimsStable(
       claimFilters: {
         issuer: { FromSmartContract: "${contractId}" }
-        keyFirstPart: "TUTORIAL"
+        keyFirstPart: "${STRING_PROCESSOR_TABLE}"
+        keySecondPart: "TUTORIAL"
       }
       offset: "0"
       maxClaimsToReturn: "10"
     ) {
-      claim {
+      claim { 
         issuer
         content {
           key

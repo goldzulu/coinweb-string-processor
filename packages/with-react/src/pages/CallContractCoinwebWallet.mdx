@@ -1,0 +1,37 @@
+import StringProcessorQRCode from '../components/StringProcessorQRCode';
+import StringProcessorSearchInput from '../components/StringProcessorSearchInput';
+
+# Call a Contract from the Coinweb Wallet
+
+In the previous examples we have invoked our smart contract from our web single
+page dApplication. One problem that instantly strikes the eye is the part of the
+offchain API code, that exposes the seed phrase. Of course this is not a valid
+configuration for the real world usage, as potential bad actors would have
+direct access to your private or company's wallet.
+
+There are other ways to embed the L2 transaction without exposing the seed
+phrase, but rely on the wallet of a user. For example a user could call a smart
+contract with the help of our official Coinweb wallet app.
+
+https://play.google.com/store/apps/details?id=com.coinwebapp&hl=en&gl=US&pli=1
+
+https://apps.apple.com/us/app/coinweb-wallet/id6443891261
+
+## Call the Contract by Scanning a QR Code
+
+In analogy to the previous examples, we will compose a call operation for our
+string-processor.cm. Instead of a button, we generate a QR code containing the
+same template for the smart contract `CallOp`. This can be scanned with your
+wallet (make sure you are on the right Network, preferably the Devnet).
+
+<br />
+<StringProcessorQRCode />
+
+## Read the Claim from the Network
+
+Finally let us read the freshly created claim from the Coinweb network. Please
+make sure the transaction has been processed and confirmed on both L1 and L2.
+You can do so by checking the Coinweb Devnet explorer.
+
+<br />
+<StringProcessorSearchInput />

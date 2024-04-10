@@ -2,9 +2,9 @@
 
 The _create_ step involves writing the code for the reactive smart contract.
 This includes defining the contract, its onchain and offchain code, and any
-interfaces it may emit. In this tutorial we will concentrate on Javascript
+interfaces it shall provide. In this tutorial we will concentrate on Javascript
 (Typescript) only. In order to create this tutorial dApp you can easily make use
-of the create coinweb-dapp. In-depth explanations can be found on
+of the `create coinweb-dapp` script. In-depth explanations can be found on
 [docs.coinweb.io](https://docs.coinweb.io/).
 
 ```bash
@@ -19,10 +19,10 @@ template.
 cweb-tool: What template to clone (git repo url or example)?: string-processor-tutorial
 ```
 
-Alternatively you can clone the publiv repository directly:
+Alternatively you can clone the public repository directly:
 
 ```bash
-git clone https://gitlab.com/coinweb/ccd-examples/string-reverser-simple.git
+git clone https://gitlab.com/coinweb/ccd-examples/string-processor-simple.git
 ```
 
 After the repository was copied your project structure should look like this:
@@ -38,9 +38,7 @@ my-dapp
 ├── package.json
 └── packages
    ├── dapp-ui (or with-react if cloned)
-   ├── string-reverser.cm
-   └── string-camel.cm
-
+   └── string-processor.cm
 ```
 
 As the final creation step you need to install the dependencies and build the
@@ -50,5 +48,5 @@ project:
 yarn install && yarn build
 ```
 
-All smart contracts are located in the `packages` directory under the `*.cm`
-naming convention.
+All smart contracts are located in the `packages` directory under the
+[`*.cm` naming convention](https://docs.coinweb.io/develop/getstarted/get-started-folder-structure#the-contract-module).

@@ -26,10 +26,9 @@ const MainLayout = () => {
         style={{
           position: 'sticky',
           top: 0,
-          zIndex: 1,
+          zIndex: 11,
           width: '100%',
           display: 'flex',
-          alignItems: 'center',
           gap: '1rem',
         }}
       >
@@ -39,6 +38,8 @@ const MainLayout = () => {
         <a href="https://react.dev" target="_blank" rel="noopener nofollow noreferrer">
           <img src={reactLogo} className="logo" alt="React logo" />
         </a>
+        <span style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white' }}>Tutorials</span>
+        <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'white' }}>string processor</span>
       </Header>
       <Content style={{ padding: '24px 48px 0' }}>
         <Row gutter={16} justify="center">
@@ -96,7 +97,7 @@ const MainLayout = () => {
       >
         {/* eslint-disable-next-line */}
         <div>API endpoint: {(window as any).__API_URL__}</div>
-        <div>String Reverser Contract ID: {stringReverserContractId}</div>
+        <div>String Processor Contract ID: {stringReverserContractId}</div>
         <div>© {new Date().getFullYear()} Coinweb — True Interoperability. Real world usage.</div>
       </Footer>
     </Layout>

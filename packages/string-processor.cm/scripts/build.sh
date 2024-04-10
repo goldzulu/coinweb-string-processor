@@ -19,6 +19,7 @@ mkdir -p $ROOT/{cweb_dist/{on,off}chain,dist/tmp/{step{1,2,3},final}}
 	--bundle \
   --log-level=error \
   --format=esm \
+  --tree-shaking=true \
 	dist/tmp/step1/onchain.js \
 	--outfile=dist/tmp/step2/onchain.js
 

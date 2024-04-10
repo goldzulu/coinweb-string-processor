@@ -1,6 +1,6 @@
 import { Descriptions, Tag } from 'antd';
 import { ReactElement } from 'react';
-import type { FetchedClaim } from 'string-reverser.cm';
+import type { FetchedClaim } from 'string-processor.cm';
 
 const CoinwebClaim = ({
   claim,

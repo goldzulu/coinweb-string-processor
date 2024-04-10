@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import * as api from 'string-reverser.cm';
-import type { FetchedClaim } from 'string-reverser.cm';
 import { message } from 'antd';
+import * as api from 'string-processor.cm';
+import type { FetchedClaim } from 'string-processor.cm';
 import { EMPTY_CLAIM } from '../constants';
+import type { CustomUiCommand, L2TransactionData } from '@coinweb/wallet-lib';
 
 export const useStringReverserSmartContract = () => {
   const [fetchedCoinwebClaim, setFetchedCoinwebClaim] = useState<FetchedClaim>(EMPTY_CLAIM);
@@ -30,9 +31,39 @@ export const useStringReverserSmartContract = () => {
 
   const generateCallOp = (input: string) => {
     try {
-      setIsLoading(true);
       return api.generateCallOp(input);
     } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const prepareTransaction = async (input: string) => {
+    if (!input || typeof input !== 'string') {
+      throw new Error('Input string has to be provided');
+    }
+
+    try {
+      const callOp = await generateCallOp(input);
+      return api.prepareTransaction(callOp as CustomUiCommand);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const embedTransaction = async (input: string) => {
+    if (!input || typeof input !== 'string') {
+      throw new Error('Input string has to be provided');
+    }
+
+    try {
+      setIsLoading(true);
+      const transactionData = await prepareTransaction(input);
+      return api.embedTransaction(transactionData as L2TransactionData).then((embedId) => {
+        message.success({ content: 'Transaction embedded successfully: '.concat(embedId) });
+        return embedId;
+      });
+    } catch (error) {
+      message.error({ content: 'Transaction not embedded' });
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -42,6 +73,8 @@ export const useStringReverserSmartContract = () => {
   return {
     readClaim,
     generateCallOp,
+    prepareTransaction,
+    embedTransaction,
     claim: fetchedCoinwebClaim,
     contractId,
     isLoading,

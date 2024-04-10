@@ -1,12 +1,13 @@
 # Deployment of a Reactive Smart Contract
 
-The _deploy_ step involves deploying the smart contract to the Coinweb network.
+The _deploy_ step involves publishing the smart contract to the Coinweb network.
 This step requires a connection to a wallet GraphQL endpoint and the
-`@coinweb/cweb-tool` package. This SDK registers the onchain code with the
-provided method handlers, which will be explained in the upcoming sections. The
-Coinweb SDK provides a simple way to deploy a smart contract to the network.
+`@coinweb/cweb-tool` package. The SDK registers the onchain code with the
+provided method handlers, which will be used and explained in the upcoming
+sections. The Coinweb SDK provides a simple way to deploy a smart contract to
+the network.
 
-## Setup the API endpoint
+## Setup the API Endpoint
 
 If you work with the default DEVNET (not a local devcontainer) you can use the
 public API endpoint by creating a `.env.yarn.devnet` file in the root directory
@@ -17,7 +18,7 @@ of your project.
 API_ENDPOINT_DEVNET=https://api-devnet.coinweb.io/wallet
 ```
 
-## Deploy a smart contract
+## Deploy a Smart Contract
 
 The contract modules are preconfigured in such way that they can be deployed
 with the following command:
@@ -25,13 +26,13 @@ with the following command:
 ```bash
 yarn deploy-contracts
 
-# with the command looking like this:
+# with the scripts looking like this:
 # ..."deploy-contracts": "yarn publish-actions",
 # ..."publish-actions": "cweb-tool publish .cweb-config/dapp-ecosystem.yaml .cweb-config/mnemonic.txt DEVNET_L1A $API_ENDPOINT_DEVNET",
 ```
 
-The cweb-tool's `publish-actions` command is a composition of `gather`,
-`filter`and`execute` actions:
+The cweb-tool's `publish-actions` command is a composition of `gather`, `filter`
+and `execute` actions:
 
 ```bash
 ...
@@ -41,7 +42,7 @@ The cweb-tool's `publish-actions` command is a composition of `gather`,
 ...
 ```
 
-## Configuration files
+## Configuration Files
 
 The most important configuration files are the `mnemonic.txt` and
 `dapp-ecosystem.yaml` files. They are generally preconfigured and contain
@@ -61,7 +62,7 @@ priority supply couple broccoli balcony sort flag keep original wrong pottery ve
 
 This is a configuration file that describes the environment or eco-system in
 which the Javascript contracts will be executed. As an example the default
-dapp-ecosystem.yaml file for Javascaript contracts looks like this:
+dapp-ecosystem.yaml file for Javascript contracts looks like this:
 
 ```yaml
 # This is a "index source" that specifies the dApp world as you see it.
@@ -85,7 +86,7 @@ interpreters: {}
 contract_templates:
   # Our contract module.  The contract module is an npm package created in the `dist/out`
   # directory using the `yarn build` and `yarn pack` commands.
-  - file:///./packages/string-reverser.cm/dist/out/my-contract-module.tgz
+  - file:///./packages/string-processor.cm/dist/out/my-contract-module.tgz
 ```
 
 The included url on the other hand points to the composition of the interpreters
@@ -112,3 +113,16 @@ interpreters:
       blake3: 9d5404c134260380eb465bdc5a44ab05391762cd504557cd0c6cb5911ccc5f9d
 contract_templates: {}
 ```
+
+### Contract Issuer
+
+After successfully publishing a smart contract to the network, the contract
+receives an `id` also referred to as `issuer`, which in return is a hash of
+files and configurations. This means any changes to your onchain code, or
+offchain code therefore, will result in a new hash, `id`, for the contract.
+
+- Issuer: The creator of the claim, typically a smart contract (id).
+
+You can find the current contract's id in the footer of this tutorial. It is
+created during the build phase, and after deployment it must be referenced in
+any related call operations.

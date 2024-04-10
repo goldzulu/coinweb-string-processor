@@ -1,0 +1,106 @@
+# Call the string-processor.cm from CLI
+
+At this point we have created a Coinweb reactive smart contract, wrote the
+onchain.js code and deployed the contract. Now we can call the contract from the
+cli (as well by utilising the `@coinweb/cweb-tool`). This section is very
+similar to the [getting started section](https://docs.coinweb.io/gettingstarted)
+in our official docs. Therefore we will not go into detail here, but cover the
+most important parts.
+
+What we want to achieve in this step is to invoke the smart contract in Coinweb,
+which means we will call the `processStrings` function of the contract with a
+set of provided strings. In the end we expect to receive the processed version
+of our input back.
+
+This will not happen in a `Request-Response` pattern as we are used to from eg.
+HTTP requests. Instead we will embed a transaction in Coinweb and wait for it to
+succeed on both the Layer 1 blockchain as well as on Layer 2 Coinweb, which will
+execute a `StoreOp` and therefore write a claim with the result to Coinweb's
+claims DB. Afterwards we will be able to read the result as often as we want.
+Think of it more as a CQRS (command-query-responsibility-segregation) pattern.
+
+## Providing Arguments
+
+The most significant part of this contract compared to the `hello-world`
+example, is the ability to dynamically provide arguments. Nevertheless we will
+start with the most static but easiest way to do so, which is by hardcoding the
+arguments into the YAML call config file of the contract.
+
+### YAML Call Config
+
+Under `packages/string-processor.cm/deploy/calls.yaml.template` you will find a
+generic template for the call config file of the string-processor contract
+module.
+
+The `calls.yaml.template` looks like this:
+
+```yaml
+# this is the contract id placeholder
+__CWEB_CONTRACT_SELF_REFERENCE__:
+  args: {}
+  cweb_provided: 80000
+  auth: false
+```
+
+The `__CWEB_CONTRACT_SELF_REFERENCE__` is a placeholder for the actual contract
+id and the args part is at this point an empty object. This template is being
+used in order to create the actual `.calls-package.yaml` file. This generated
+file will be picked up by the cweb-tool before executing the smart contract
+invocation.
+
+In order to provide arguments we can alter the `args` part. The provided
+arguments must be composed in a list that follows a strict order which goes as
+follows:
+
+1. Handler that we want to execute, in our case the `DEFAULT_HANDLER_NAME`
+2. First key part (in our case a constant, think table name)
+3. Second key part (some arbitrary identifier)
+4. Body or general arguments (the string we want to process)
+
+The `calls.yaml.template` file should be altered to look like this:
+
+```yaml
+# this is the contract id
+__CWEB_CONTRACT_SELF_REFERENCE__:
+  args:
+    - 'DEFAULT'
+    - 'STRING-PROCESSOR-TABLE'
+    - 'TUTORIAL'
+    - 'STRING WE WANT TO BE PROCESSED'
+  cweb_provided: 80000
+  auth: false
+```
+
+As you may recall in our default handler function we access the arguments from
+`context` with the `getMethodArguments` function, whereby the first argument is
+sliced as it is reserved for the method handler name.
+
+```ts
+// ...
+const [firstPart, secondPart, body] = getMethodArguments(context).slice(1);
+// ...
+```
+
+The broader definition of a claim can be found on
+[our docs page](https://docs.coinweb.io/develop/reactive-smart-contracts/develop-claims-storage).
+In short a claim is a key-value pair that is stored on Coinweb's claims DB.
+
+- First Key: Often used as the "table name" in the context of the claim.
+- Second Key: Used as the "key in table", providing an additional level of
+  organization within the claim.
+- Body: The actual stored value of the claim.
+
+### Executing the call
+
+In order to execute the call we need to run the following prepared scripts, that
+will utilise `@coinweb/cweb-tool` and execute the contract call:
+
+```bash
+cd packages/string-processor.cm
+yarn call-contract
+
+# ... which is the combination of the following scripts:
+# "call-contract": "yarn call-contract:prepare && yarn call-contract:invoke",
+# "call-contract:prepare": "./scripts/make-single-call.sh",
+# "call-contract:invoke": "cweb-tool call deploy/calls.yaml ../../.cweb-config/mnemonic.txt DEVNET_L1A https://api-devnet.coinweb.io/wallet",
+```

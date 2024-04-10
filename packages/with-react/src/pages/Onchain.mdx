@@ -1,4 +1,4 @@
-# String-reverser contract module
+# String Processor Contract Module
 
 Traditionally the reactive smart contract is divided in th onchain and offchain
 part. The onchain part is the smart contract itself, which is deployed on the
@@ -9,7 +9,7 @@ ecosystem. The offchain part can provide an API for the user interface etc.
 
 ## Onchain.js
 
-Let's take a look at the onchain part of the string-reverser smart contract
+Let's take a look at the onchain part of the string-processor smart contract
 module. As the name suggests, the onchain part should be written in Javascript
 (Typescript) and is supposed to reverse a string. Our main goal therefore is to
 create a reactive smart contract that receives a string, processes it by
@@ -29,56 +29,63 @@ back together into a single string.
 function stringReverser(...stringsToReverse: string[]): string {
   return stringsToReverse
     .flat(Infinity)
-    .map((str) => str.split('').reverse().join(''))
+    .map((str) => str.trim().split('').reverse().join(''))
     .join(' ');
+}
+
+function stringToggleCaser(...stringsToToggleCase: string[]): string {
+  function toggleCaseString(str: string): string {
+    let spacesCounter = 0;
+    return str
+      .trim()
+      .replace(/\s+/g, ' ')
+      .split('')
+      .map((char, idx) => {
+        if (char === ' ') {
+          spacesCounter += 1;
+          return char;
+        }
+        return (idx - spacesCounter) % 2 > 0
+          ? char.toUpperCase()
+          : char.toLowerCase();
+      })
+      .join('');
+  }
+
+  return stringsToToggleCase.flat(Infinity).map(toggleCaseString).join(' ');
+}
+
+function stringProcessor(body: string | string[]): string {
+  const stringsToProcess = Array.isArray(body)
+    ? stringReverser(...body)
+    : stringReverser(body);
+  return stringToggleCaser(stringReverser(stringsToProcess));
 }
 ```
 
 ### 2: Write the default contract handler function
 
-The default handler function (in this case we call it the `logic` function) is
-the main/default entry point for the contract invocation. It receives a context
-argument containing details about the transaction, provided CWEBs for subsequent
-transactions (if any), the transaction itself, the provided arguments (if any),
-etc.
+The default handler function (in this case we call it the `processStrings`
+function) is the main/default entry point for the contract invocation. It
+receives a context argument containing details about the transaction, provided
+CWEBs for subsequent transactions (if any), the transaction itself, the provided
+arguments (if any), etc.
 
 In our case we extract Coinweb's smart contract ID and the provided arguments
 from the context. Followed by some argument validation, we create a continuation
 transaction which composes a generic `StoreOp` claim. The StoreOp as implicated
 stores the claim in Coinweb's claims DB. After a successful invocation the
 stored claim will be readable from the "outside world". All templating helpers
-can are imported from `@coinweb/contract-kit`.
+can be imported from `@coinweb/contract-kit`.
 
 The `getMethodArguments` part will be explained later in this tutorial.
 
 ```ts
-function logic(context: Context): NewTx[] {
+function processStrings(context: Context): NewTx[] {
   const { tx } = context;
   const contractId = getContractId(tx);
 
   const [firstPart, secondPart, body] = getMethodArguments(context).slice(1);
-
-  if (typeof firstPart !== 'string') {
-    throw new Error('Invalid arguments, first key part must be a string');
-  }
-
-  if (Array.isArray(body)) {
-    if (body.length < 1) {
-      throw new Error(
-        'Invalid arguments, body must be an array and contain at least one string to reverse'
-      );
-    }
-
-    if (body.some((arg) => typeof arg !== 'string')) {
-      throw new Error(
-        'Invalid arguments, body array must be composed of strings'
-      );
-    }
-  } else if (typeof body !== 'string') {
-    throw new Error(
-      'Invalid arguments, body must be a string or an array of strings'
-    );
-  }
 
   return [
     continueTx([
@@ -86,7 +93,7 @@ function logic(context: Context): NewTx[] {
       store(
         genericClaim(
           claimKey(firstPart, secondPart),
-          Array.isArray(body) ? stringReverser(...body) : stringReverser(body),
+          stringProcessor(body),
           toHex(0)
         )
       ),
@@ -101,29 +108,34 @@ The final step is to define the contract's registration step. We create a
 `cwebMain` function by convention, which is the entry point for the contract
 module deployment. Starting with an empty module object, we add the
 `DEFAULT_HANDLER_NAME` as the convention for the default contract handler. We
-can also use any other additional handlers with several other provided. Later in
-this tutorial we will extend the onchain logic.
+can also use any other additional handlers with several other provided handlers.
+In our case we also add two separate handlers for the partial processing of a
+string. Later in this tutorial we will look at the additional onchain logic.
 
-The second handler is as well a generic internal convention, the
-`SELF_REGISTER_HANDLER_NAME`, which is the default way for registering Coinweb
-smart contracts. During the registration useLinkClickHandler, if the
+The last handler is as well a
+[generic internal convention](https://docs.coinweb.io/develop/reactive-smart-contracts/contract-registration/self-register),
+the `SELF_REGISTER_HANDLER_NAME`, which is the default way for registering
+Coinweb smart contracts. During the registration useLinkClickHandler, if the
 `SELF_REGISTER_HANDLER_NAME` is provided, the contract will be registered with
 the provided handler, in this case another default `selfRegisterHandler`
 imported from `@coinweb/self-register` SDK.
 
+{/* prettier-ignore */}
 ```ts
 export function cwebMain() {
   const module: ContractHandlers = { handlers: {} };
-  addMethodHandler(module, DEFAULT_HANDLER_NAME, logic);
+  addMethodHandler(module, DEFAULT_HANDLER_NAME, withValidateInputArguments(processStrings));
+  addMethodHandler(module, TOGGLE_CASER, withValidateInputArguments(onlyToggleCase));
+  addMethodHandler(module, REVERSER, withValidateInputArguments(onlyReverse));
   addMethodHandler(module, SELF_REGISTER_HANDLER_NAME, selfRegisterHandler);
   executeHandler(module);
 }
 ```
 
-That is all we need for the onchain part of the string-reverser smart contract
+That is all we need for the onchain part of the string-processor smart contract
 module.
 
-You can find the full code under `packages/string-reverser.cm/src/onchain.ts`.
+You can find the full code under `packages/string-processor.cm/src/onchain.ts`.
 
 The onchain part is not per se limited, but the bigger the file size the more
 gas will be needed in order to publish and store it on the Coinweb network.

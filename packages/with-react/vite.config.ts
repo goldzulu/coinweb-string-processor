@@ -15,7 +15,10 @@ import ts from 'highlight.js/lib/languages/typescript';
 export default defineConfig({
   build: { target: 'esnext' },
   plugins: [
-    mdx({ rehypePlugins: [[rehypeHighlight, { languages: { json, bash, yaml, ts } }]] }),
+    mdx({
+      rehypePlugins: [[rehypeHighlight, { languages: { json, bash, yaml, ts } }]],
+      remarkPlugins: [],
+    }),
     react(),
     wasm(),
     nodePolyfills({

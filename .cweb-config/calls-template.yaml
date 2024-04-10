@@ -1,2 +1,2 @@
 calls:
-  - !include packages/string-reverser.cm/deploy/.calls-package.yaml
+  - !include packages/string-processor.cm/deploy/.calls-package.yaml

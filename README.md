@@ -28,10 +28,10 @@ for the updated smart contracts will have to be broadcasted.
 
 ## Example contract modules
 
-### String Reverser
+### String Processor
 
 ```
-./packages/string-reverser.cm
+./packages/string-processor.cm
 ```
 
 This contract module contains a smart contract that simply writes a claim that consists of processed strings. The offchain "app" contains code to fetch and display the claim.
@@ -45,12 +45,12 @@ This contract module contains a smart contract that simply writes a claim that c
 This contract module contains a smart contract that creates a token (from parameters),
 and after successful creation, calls back into itself.
 
-## Call string-reverser smart contract example
+## Call string-processor smart contract example
 
-You can invoke your smart contracts by running `yarn workspace string-reverser.cm
-call-contract`. This will create a claim that contains "string-reverser" in devnet.
+You can invoke your smart contracts by running `yarn workspace string-processor.cm
+call-contract`. This will create a claim that contains "string-processor" in devnet.
 
-The `yarn workspace string-reverser.cm call-contract` command will create a
+The `yarn workspace string-processor.cm call-contract` command will create a
 transaction that calls the smart contract. This is done by creating a
 `call.yaml` file based on the `call.yaml.template` (replacing the contract id).
 Then it calls `cweb-tool call ...` which creates a transaction that invokes the
@@ -58,7 +58,7 @@ smart contract with the arguments specified in `call.yaml` (currently no
 arguments are specified there).
 
 ```
-$ yarn workspace string-reverser.cm call-contract
+$ yarn workspace string-processor.cm call-contract
 
 ...
 Transaction ID:  f116fc3046c43c2223e4d6d1fd0566db9b97b5bd909f4a05362f79ca5e2ba341
@@ -73,7 +73,7 @@ The smart contract example writes a "hello world" claim (key: [1, 4], value:
 the `@coinweb/wallet-lib` to read this claim from the devnet.
 
 ```
-$ yarn workspace string-reverser.cm start
+$ yarn workspace string-processor.cm start
 ```
 
 ## Scripts

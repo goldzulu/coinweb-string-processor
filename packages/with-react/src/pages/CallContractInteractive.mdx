@@ -1,0 +1,33 @@
+import StringProcessorWriteForm from '../components/StringProcessorWriteForm';
+import StringProcessorSearchInput from '../components/StringProcessorSearchInput';
+
+# Call the Contract from a dApp
+
+As of now we have created a contract, deployed it via our CLI and also called it
+with provided arguments from our CLI. In a lot of scenarios we likely want to
+build a dApp and call a contract from our front end code, or in fact let our
+dApp users call the contract with their arguments. Think a user who provides
+data such as a nickname or a shipping address.
+
+Let us assume such a scenario in which the user has control over the input
+arguments.
+
+## Call the Contract with Provided Arguments
+
+By entering a string you want to reverse, you can preview the claim arguments as
+well as the generated Call operation and the resulting prepared
+TransactionMonitor. You can call the contract by pressing the call contract
+button.
+
+<br />
+<StringProcessorWriteForm />
+<br />
+
+## Read the Claim from the Network
+
+Finally let us read the freshly created claim from the Coinweb network. Please
+make sure the transaction has been processed and confirmed on both L1 and L2.
+You can do so by checking the Coinweb Devnet explorer.
+
+<br />
+<StringProcessorSearchInput />

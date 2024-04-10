@@ -1,19 +1,22 @@
 import StringProcessorSearchInput from '../components/StringProcessorSearchInput';
 
-# Read a claim from Coinweb using @coinweb/wallet-lib
+# Read a Claim from Coinweb Using @coinweb/wallet-lib
 
 Now that we have written the claim to DB by calling our contract with arguments,
 we can read it. Coinweb offers a house intern library, called
 `@coinweb/wallet-lib`, that wraps the GraphQL API and provides a simple
 interface to interact with it. Go ahead and try to find your claim using the
-input below. It expects you to provide the first key of the claim.
+input below. It expects you to provide the second key of the claim (by default
+we used `TUTORIAL` as the second key).
 
+<br />
 <StringProcessorSearchInput />
+<br />
 
 The body of the fetched claim should equal the expected result of your contract
-call, which in our case is the reversed string.
+call, which in our case is the reversed and toggle cased string.
 
-## Offchain code
+## Offchain Code
 
 The fetching happens in our offchain code, which is located in the
 `src/offchain` directory. The `api.ts` wraps the `@coinweb/wallet-lib` and
@@ -57,14 +60,14 @@ The `index.ts` file contains the function that calls the sample api.
 
 export const readClaim = async (input: string): Promise<FetchedClaim> => {
   const inputArray = Array.isArray(input) ? input : [input];
-  const firstKeyPart = inputArray.flat(Infinity).join(' ');
+  const keySecondPart = inputArray.flat(Infinity).join(' ');
 
   return api
     .fetchClaims([
       {
         issuer: { FromSmartContract: constants.contractId },
-        keyFirstPart: firstKeyPart,
-        keySecondPart: null,
+        keyFirstPart: constants.STRING_PROCESSOR_TABLE,
+        keySecondPart,
         startsAtKeySecondPart: null,
         endsAtKeySecondPart: null,
       },

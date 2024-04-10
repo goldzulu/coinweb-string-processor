@@ -19,12 +19,12 @@
     "@coinweb/wallet-lib": "^0.1.112-esm",
     "antd": "^5.16.1",
     "highlight.js": "^11.9.0",
-    "pretty-print-json": "^3.0.0",
+    "p-debounce": "^4.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
     "rehype-highlight": "^7.0.0",
-    "string-reverser.cm": "workspaces:*",
+    "string-processor.cm": "workspaces:*",
     "use-deep-compare-effect": "^1.8.1"
   },
   "devDependencies": {
@@ -45,7 +45,6 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
     "jsdom": "^24.0.0",
-    "lodash.kebabcase": "^4.1.1",
     "prettier": "^3.2.5",
     "typescript": "^5.4.2",
     "vite": "^5.1.6",

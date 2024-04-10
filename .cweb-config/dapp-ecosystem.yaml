@@ -19,4 +19,4 @@ interpreters: {}
 contract_templates:
   # Our contract module.  The contract module is an npm package created in the `dist/out`
   # directory using the `yarn build` and `yarn pack` commands.
-  - file:///./packages/string-reverser.cm/dist/out/my-contract-module.tgz
+  - file:///./packages/string-processor.cm/dist/out/my-contract-module.tgz
