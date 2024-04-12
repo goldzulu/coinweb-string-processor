@@ -1,29 +1,27 @@
 import { useState, useEffect } from 'react';
-import { message } from 'antd';
 import * as api from 'string-processor.cm';
 import type { FetchedClaim } from 'string-processor.cm';
 import { EMPTY_CLAIM } from '../constants';
 import type { CustomUiCommand, L2TransactionData } from '@coinweb/wallet-lib';
 
 export const useStringReverserSmartContract = () => {
-  const [fetchedCoinwebClaim, setFetchedCoinwebClaim] = useState<FetchedClaim>(EMPTY_CLAIM);
+  const [methodHandler, setMethodHandler] = useState<string>();
+  const [fetchedCoinwebClaims, setFetchedCoinwebClaims] = useState<FetchedClaim[]>([EMPTY_CLAIM]);
   const [contractId, setContractId] = useState<string>();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    console.log('Fetching contract ID,useStringReverserSmartContract');
     api.getContractId().then((id) => setContractId(id));
   }, []);
 
-  const readClaim = async (input: string) => {
+  const readClaims = async (input?: string) => {
     try {
       setIsLoading(true);
-      await api.readClaim(input).then((claim) => {
-        setFetchedCoinwebClaim(claim);
-        message.success({ content: 'Found claim' });
-      });
+      await api.readClaim(input).then(setFetchedCoinwebClaims);
     } catch (error) {
-      message.error({ content: (error as Error).message });
-      setFetchedCoinwebClaim(EMPTY_CLAIM);
+      setFetchedCoinwebClaims([EMPTY_CLAIM]);
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -31,7 +29,7 @@ export const useStringReverserSmartContract = () => {
 
   const generateCallOp = (input: string) => {
     try {
-      return api.generateCallOp(input);
+      return api.generateCallOp(input, methodHandler);
     } catch (error) {
       console.error(error);
     }
@@ -58,24 +56,23 @@ export const useStringReverserSmartContract = () => {
     try {
       setIsLoading(true);
       const transactionData = await prepareTransaction(input);
-      return api.embedTransaction(transactionData as L2TransactionData).then((embedId) => {
-        message.success({ content: 'Transaction embedded successfully: '.concat(embedId) });
-        return embedId;
-      });
+      return api.embedTransaction(transactionData as L2TransactionData);
     } catch (error) {
-      message.error({ content: 'Transaction not embedded' });
       console.error(error);
+      throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
   return {
-    readClaim,
+    readClaims,
     generateCallOp,
     prepareTransaction,
     embedTransaction,
-    claim: fetchedCoinwebClaim,
+    methodHandler,
+    setMethodHandler,
+    claims: fetchedCoinwebClaims,
     contractId,
     isLoading,
   };

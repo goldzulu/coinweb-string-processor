@@ -1,4 +1,4 @@
-import { Layout, Menu, Col, Row, theme, Button, Divider } from 'antd';
+import { Layout, Menu, Col, Row, theme, Button, Divider, Tag, message } from 'antd';
 import { ArrowRightOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Outlet } from 'react-router-dom';
 import { useStringReverserSmartContract } from '../hooks/useStringReverserSmartContract';
@@ -96,8 +96,26 @@ const MainLayout = () => {
         }}
       >
         {/* eslint-disable-next-line */}
-        <div>API endpoint: {(window as any).__API_URL__}</div>
-        <div>String Processor Contract ID: {stringReverserContractId}</div>
+        <div>
+          API endpoint:{' '}
+          <a href={(window as any).__API_URL__} target="_blank" rel="noreferrer noopener">
+            {(window as any).__API_URL__}
+          </a>
+        </div>
+        <div>
+          String Processor Contract ID:{' '}
+          <Tag
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              if (stringReverserContractId) {
+                navigator.clipboard.writeText(stringReverserContractId);
+                message.success('Copied smart contract ID to clipboard');
+              }
+            }}
+          >
+            {stringReverserContractId}
+          </Tag>
+        </div>
         <div>© {new Date().getFullYear()} Coinweb — True Interoperability. Real world usage.</div>
       </Footer>
     </Layout>

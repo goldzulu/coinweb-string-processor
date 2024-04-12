@@ -58,12 +58,15 @@ export const fetchClaims = async (claimFilters: CwebWallet.GqlClaimFilter[]): Pr
  * @param {string | string[]} input The input to the contract call
  * @returns {CwebWallet.CustomUiCommand} The generated contract call
  */
-export const generateContractCallOperation = (input: string | string[]): CwebWallet.CustomUiCommand => {
+export const generateContractCallOperation = (
+  input: string | string[],
+  methodHandler: string = DEFAULT_HANDLER_NAME
+): CwebWallet.CustomUiCommand => {
   const inputArray = Array.isArray(input) ? input : [input];
   const firstKeyPart = STRING_PROCESSOR_TABLE;
-  const secondKeyPart = inputArray.flat(Infinity).join(" ").trim();
+  const secondKeyPart = inputArray.flat(Infinity).join(" ").trim() || undefined;
 
-  const data = [DEFAULT_HANDLER_NAME, firstKeyPart, secondKeyPart, inputArray];
+  const data = [methodHandler, firstKeyPart, secondKeyPart, inputArray];
 
   return {
     calls: [

@@ -1,0 +1,90 @@
+import StringProcessorWriteForm from '../components/StringProcessorWriteForm';
+
+# Call a non-default Method Handler
+
+Until now we have called our sting-processor smart contract executing only the
+default method handler. In our example the string processor is a composition of
+two separate functions. What if we want to call each of these functions
+separately.
+
+In our `onchain.js` code we have registered (or added) two additional method
+handlers, along with the default method handler.
+
+{/* prettier-ignore */}
+```ts
+// export function cwebMain() {
+//   const module: ContractHandlers = { handlers: {} };
+//   addMethodHandler(module, DEFAULT_HANDLER_NAME, withValidateInputArguments(processStrings));
+  addMethodHandler(module, TOGGLE_CASER, withValidateInputArguments(onlyToggleCase));
+  addMethodHandler(module, REVERSER, withValidateInputArguments(onlyReverse));
+//   addMethodHandler(module, SELF_REGISTER_HANDLER_NAME, selfRegisterHandler);
+//   executeHandler(module);
+// }
+```
+
+By calling the proper handler we can call each method individually. The only
+thing that will h ave to change is the very first argument we provide.
+
+Either we adapt the config YAML template file:
+
+```yaml
+# this is the contract id
+__CWEB_CONTRACT_SELF_REFERENCE__:
+  args:
+    - 'TOGGLE_CASER' # replaces the 'DEFAULT' method handler indicator
+    - 'STRING-PROCESSOR-TABLE'
+    - 'TUTORIAL'
+    - 'STRING WE WANT TO BE PROCESSED'
+  cweb_provided: 80000
+  auth: false
+```
+
+Or we generate the `CallOp` in Javascript accordingly:
+
+```ts
+/**
+ * Generate a ContractCall with provided input string or array of strings
+ *
+ * @param {string | string[]} input The input to the contract call
+ * @returns {CwebWallet.CustomUiCommand} The generated contract call
+ */
+export const generateContractCallOperation = (
+  input: string | string[],
+  methodHandler: string = DEFAULT_HANDLER_NAME
+): CwebWallet.CustomUiCommand => {
+  const inputArray = Array.isArray(input) ? input : [input];
+  const firstKeyPart = STRING_PROCESSOR_TABLE;
+  const secondKeyPart = inputArray.flat(Infinity).join(' ').trim();
+
+  const data = [methodHandler, firstKeyPart, secondKeyPart, inputArray];
+
+  return {
+    calls: [
+      {
+        contract_input: {
+          authenticated: true, // hardcoded
+          cost: '0x00000000000000000000000000000000000000000000000000000000000186a0', // hardcoded
+          data,
+        },
+        contract_ref: {
+          explicit: [],
+          stored: [readClaim(contractIssuer(contractId), selfRegisterKey())],
+        },
+      } as ContractCall,
+    ],
+  };
+};
+```
+
+## Call a Single Contract Method
+
+Let us go ahead and call only a single method of the contract. We extend our
+dApplication with an additional select field, that allows us to choose the
+method handler we want to call.
+
+<br />
+<StringProcessorWriteForm withMethodHandlerSelector />
+<br />
+
+In the upcoming section we will summarise our dApp and look at what we have
+done.

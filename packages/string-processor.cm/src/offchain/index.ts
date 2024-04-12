@@ -17,9 +17,9 @@ export const getContractId = async (): Promise<string> => {
   return constants.contractId;
 };
 
-export const readClaim = async (input: string): Promise<FetchedClaim> => {
+export const readClaim = async (input?: string): Promise<FetchedClaim[]> => {
   const inputArray = Array.isArray(input) ? input : [input];
-  const keySecondPart = inputArray.flat(Infinity).join(" ").trim();
+  const keySecondPart = inputArray.flat(Infinity).join(" ").trim() || undefined;
 
   return api
     .fetchClaims([
@@ -37,23 +37,22 @@ export const readClaim = async (input: string): Promise<FetchedClaim> => {
       }
 
       if (claimsResponse.status === "success") {
-        const [fetchedClaim] = claimsResponse.result as IssuedClaim[];
-
-        if (fetchedClaim?.content?.body && fetchedClaim?.content?.key) {
-          return {
-            body: fetchedClaim.content.body as string,
-            firstKey: fetchedClaim.content.key.first_part,
-            secondKey: fetchedClaim.content.key.second_part,
-          };
+        const fetchedClaims = claimsResponse.result as IssuedClaim[];
+        if (fetchedClaims.length > 0) {
+          return fetchedClaims.map((claim) => ({
+            body: claim.content.body as string,
+            firstKey: claim.content.key.first_part,
+            secondKey: claim.content.key.second_part,
+          }));
         }
 
-        throw new Error("Claim not found.");
+        throw new Error("No claims found.");
       }
     });
 };
 
-export const generateCallOp = async (input: string) => {
-  return api.generateContractCallOperation(input);
+export const generateCallOp = async (input: string, methodHandler?: string) => {
+  return api.generateContractCallOperation(input, methodHandler);
 };
 
 export const prepareTransaction = async (callOp: CustomUiCommand) => {

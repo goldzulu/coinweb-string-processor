@@ -1,7 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import pDebounce from 'p-debounce';
-import { Collapse, Button, Form, Input, Row, Col, Descriptions } from 'antd';
+import { Collapse, Button, Form, Input, Row, Col, Descriptions, Select, message } from 'antd';
 import type { FetchedClaim } from 'string-processor.cm';
+import { TOGGLE_CASER, REVERSER, DEFAULT_HANDLER_NAME, STRING_PROCESSOR_TABLE } from 'string-processor.cm';
 import type { CustomUiCommand, L2TransactionData } from '@coinweb/wallet-lib';
 import CoinwebClaim from './CoinwebClaim';
 import HighlightCodeBlock from './HighlightCodeBlock';
@@ -12,37 +13,42 @@ function InputLabel() {
   return <>Enter a string that you want to be processed</>;
 }
 
-function StringProcessorWriteForm() {
+function SelectLabel() {
+  return <>Select a method handler</>;
+}
+
+function StringProcessorWriteForm({ withMethodHandlerSelector }: { withMethodHandlerSelector?: boolean }) {
   const [claimPreview, setClaimPreview] = useState<FetchedClaim & { handler: string }>({
     ...EMPTY_CLAIM,
-    handler: 'DEFAULT',
+    handler: DEFAULT_HANDLER_NAME,
   });
   const [transactionDataPreview, setTransactionDataPreview] = useState<L2TransactionData | null>(null);
   const [callOpPreview, setCallOpPreview] = useState<CustomUiCommand | null>(null);
   const [embedId, setEmbedId] = useState<string>();
   const [stringToBeProcessed, setStringToBeProcessed] = useState<string>('');
 
-  const { generateCallOp, prepareTransaction, embedTransaction, isLoading } = useStringReverserSmartContract();
+  const { generateCallOp, prepareTransaction, embedTransaction, isLoading, methodHandler, setMethodHandler } =
+    useStringReverserSmartContract();
 
-  const prepareTransactionPreview = useCallback(
+  const generateTransactionPreview = useCallback(
     pDebounce(async (input: string) => {
       await prepareTransaction(input)?.then((transactionData) => {
         setTransactionDataPreview(transactionData as L2TransactionData);
       });
     }, 300),
-    []
+    [methodHandler]
   );
 
-  const prepareCallOpPreview = useCallback(
+  const generateCallOpPreview = useCallback(
     pDebounce(async (input: string) => {
       await generateCallOp(input)?.then((callOp) => {
         if (callOp) setCallOpPreview(callOp);
       });
     }, 150),
-    []
+    [methodHandler]
   );
 
-  const prepareClaimPreview = useCallback(
+  const generateClaimPreview = useCallback(
     pDebounce(async (input: string) => {
       await generateCallOp(input)?.then((callOp) => {
         if (callOp) {
@@ -56,18 +62,22 @@ function StringProcessorWriteForm() {
         }
       });
     }, 150),
-    []
+    [methodHandler]
   );
 
   const generateCallOpClaimPreview = async (input: string) => {
     if (input) {
-      prepareTransactionPreview(input);
-      prepareCallOpPreview(input);
-      prepareClaimPreview(input);
+      generateTransactionPreview(input);
+      generateCallOpPreview(input);
+      generateClaimPreview(input);
     } else {
-      setClaimPreview({ ...EMPTY_CLAIM, handler: 'DEFAULT' });
+      setClaimPreview({ ...EMPTY_CLAIM, handler: DEFAULT_HANDLER_NAME, firstKey: STRING_PROCESSOR_TABLE });
     }
   };
+
+  useEffect(() => {
+    generateCallOpClaimPreview(stringToBeProcessed);
+  }, [stringToBeProcessed, methodHandler]);
 
   return (
     <Row gutter={[0, 32]} style={{ width: '100%' }} justify="center">
@@ -76,12 +86,28 @@ function StringProcessorWriteForm() {
         <Form
           layout="vertical"
           onFinish={(form) => {
-            embedTransaction(form?.stringToBeProcessed).then((embedId) => {
-              console.log('Transaction embedded with id:', embedId);
-              setEmbedId(embedId);
-            });
+            embedTransaction(form?.stringToBeProcessed)
+              .then((embedId) => {
+                if (embedId) {
+                  message.success({ content: 'Transaction embedded successfully: '.concat(embedId), duration: 8 });
+                }
+                setEmbedId(embedId);
+                return embedId;
+              })
+              .catch((error) => {
+                message.success({ content: (error as Error).message, duration: 8 });
+              });
           }}
         >
+          {withMethodHandlerSelector && (
+            <Form.Item name="selectMethodHandler" label={<SelectLabel />} initialValue={DEFAULT_HANDLER_NAME}>
+              <Select onSelect={setMethodHandler}>
+                <Select.Option value={DEFAULT_HANDLER_NAME}>{DEFAULT_HANDLER_NAME}</Select.Option>
+                <Select.Option value={TOGGLE_CASER}>{TOGGLE_CASER}</Select.Option>
+                <Select.Option value={REVERSER}>{REVERSER}</Select.Option>
+              </Select>
+            </Form.Item>
+          )}
           <Form.Item
             name="stringToBeProcessed"
             label={<InputLabel />}
@@ -91,7 +117,6 @@ function StringProcessorWriteForm() {
               value={stringToBeProcessed}
               onChange={async (e) => {
                 setStringToBeProcessed(e.target.value);
-                await generateCallOpClaimPreview(e.target.value);
               }}
             />
           </Form.Item>

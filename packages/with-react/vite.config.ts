@@ -10,13 +10,21 @@ import json from 'highlight.js/lib/languages/json';
 import bash from 'highlight.js/lib/languages/bash';
 import yaml from 'highlight.js/lib/languages/yaml';
 import ts from 'highlight.js/lib/languages/typescript';
+import gql from 'highlight.js/lib/languages/graphql';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   build: { target: 'esnext' },
   plugins: [
     mdx({
-      rehypePlugins: [[rehypeHighlight, { languages: { json, bash, yaml, ts } }]],
+      rehypePlugins: [
+        [
+          rehypeHighlight,
+          {
+            languages: { json, bash, yaml, ts, gql },
+          },
+        ],
+      ],
       remarkPlugins: [],
     }),
     react(),

@@ -15,9 +15,7 @@ import {
   DEFAULT_HANDLER_NAME,
 } from "@coinweb/contract-kit";
 import { selfRegisterHandler } from "@coinweb/self-register";
-
-const TOGGLE_CASER = "TOGGLE-CASER";
-const REVERSER = "REVERSER";
+import { REVERSER, TOGGLE_CASER } from "../offchain/constants";
 
 function stringReverser(...stringsToReverse: string[]): string {
   return stringsToReverse

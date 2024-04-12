@@ -14,7 +14,36 @@ formulated as a GraphQL query.
 
 When you run the predefined query below (with the correct `contract id`,
 `first key` and `second key` set), you should see your expected result stored in
-the response body.
+the response body. The second key is optional and can be left out if you want to
+select all the claims of the claims table specified by the first key.
+
+```gql
+query {
+  shard(name: DEVNET_L1A) {
+    fetchClaimsStable(
+      claimFilters: {
+        issuer: { FromSmartContract: "YOUR_CONTRACT_ID" }
+        keyFirstPart: "STRING-PROCESSOR-TABLE"
+        keySecondPart: "TUTORIAL"
+      }
+      offset: "0"
+      maxClaimsToReturn: "10"
+    ) {
+      claim {
+        issuer
+        content {
+          key
+          body
+        }
+      }
+    }
+  }
+}
+```
+
+The contract ID changes every time you make any changes to your offchain or your
+onchain code. Please make sure the embedded GraphQL IDE catches up with the
+contract ID state correctly.
 
 {/* prettier-ignore-start */}
 
@@ -32,7 +61,6 @@ the response body.
       claimFilters: {
         issuer: { FromSmartContract: "${contractId}" }
         keyFirstPart: "${STRING_PROCESSOR_TABLE}"
-        keySecondPart: "TUTORIAL"
       }
       offset: "0"
       maxClaimsToReturn: "10"
