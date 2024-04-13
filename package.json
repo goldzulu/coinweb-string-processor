@@ -29,7 +29,7 @@
   },
   "resolutions": {
     "@coinweb/cweb-tool": "1.0.32",
-    "@coinweb/wallet-lib": "^0.1.112-esm"
+    "@coinweb/wallet-lib": "^0.1.113-esm"
   },
   "devDependencies": {
     "@coinweb/cweb-tool": "1.0.32",

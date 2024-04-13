@@ -42,6 +42,8 @@ __CWEB_CONTRACT_SELF_REFERENCE__:
 Or we generate the `CallOp` in Javascript accordingly:
 
 ```ts
+// packages/string-processor.cm/src/offchain/api.ts
+
 /**
  * Generate a ContractCall with provided input string or array of strings
  *
@@ -54,7 +56,7 @@ export const generateContractCallOperation = (
 ): CwebWallet.CustomUiCommand => {
   const inputArray = Array.isArray(input) ? input : [input];
   const firstKeyPart = STRING_PROCESSOR_TABLE;
-  const secondKeyPart = inputArray.flat(Infinity).join(' ').trim();
+  const secondKeyPart = inputArray.flat(Infinity).join(' ').trim() || undefined;
 
   const data = [methodHandler, firstKeyPart, secondKeyPart, inputArray];
 
@@ -85,6 +87,3 @@ method handler we want to call.
 <br />
 <StringProcessorWriteForm withMethodHandlerSelector />
 <br />
-
-In the upcoming section we will summarise our dApp and look at what we have
-done.

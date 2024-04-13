@@ -1,4 +1,4 @@
-import { Layout, Menu, Col, Row, theme, Button, Divider, Tag, message } from 'antd';
+import { Layout, Menu, Col, Row, theme, Button, Divider, Tag, message, Flex } from 'antd';
 import { ArrowRightOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Outlet } from 'react-router-dom';
 import { useStringReverserSmartContract } from '../hooks/useStringReverserSmartContract';
@@ -68,7 +68,7 @@ const MainLayout = () => {
 
               <Divider />
 
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Flex justify="space-between">
                 <div>
                   {previousItem && (
                     <Button type="text" onClick={previousItem.onClick} icon={<ArrowLeftOutlined />}>
@@ -83,40 +83,36 @@ const MainLayout = () => {
                     </Button>
                   )}
                 </div>
-              </div>
+              </Flex>
             </div>
           </Col>
         </Row>
       </Content>
-      <Footer
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        {/* eslint-disable-next-line */}
-        <div>
-          API endpoint:{' '}
-          <a href={(window as any).__API_URL__} target="_blank" rel="noreferrer noopener">
-            {(window as any).__API_URL__}
-          </a>
-        </div>
-        <div>
-          String Processor Contract ID:{' '}
-          <Tag
-            style={{ cursor: 'pointer' }}
-            onClick={() => {
-              if (stringReverserContractId) {
-                navigator.clipboard.writeText(stringReverserContractId);
-                message.success('Copied smart contract ID to clipboard');
-              }
-            }}
-          >
-            {stringReverserContractId}
-          </Tag>
-        </div>
-        <div>© {new Date().getFullYear()} Coinweb — True Interoperability. Real world usage.</div>
+      <Footer>
+        <Flex align="center" vertical={true} gap="small">
+          {/* eslint-disable-next-line */}
+          <div>
+            API endpoint:{' '}
+            <a href={(window as any).__API_URL__} target="_blank" rel="noreferrer noopener">
+              {(window as any).__API_URL__}
+            </a>
+          </div>
+          <div>
+            String Processor Contract ID:{' '}
+            <Tag
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                if (stringReverserContractId) {
+                  navigator.clipboard.writeText(stringReverserContractId);
+                  message.success('Copied smart contract ID to clipboard');
+                }
+              }}
+            >
+              {stringReverserContractId}
+            </Tag>
+          </div>
+          <div>© {new Date().getFullYear()} Coinweb — True Interoperability. Real world usage.</div>
+        </Flex>
       </Footer>
     </Layout>
   );

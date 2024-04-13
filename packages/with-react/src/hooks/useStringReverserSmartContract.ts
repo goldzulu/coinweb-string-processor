@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import * as api from 'string-processor.cm';
 import type { FetchedClaim } from 'string-processor.cm';
 import { EMPTY_CLAIM } from '../constants';
@@ -11,7 +11,6 @@ export const useStringReverserSmartContract = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    console.log('Fetching contract ID,useStringReverserSmartContract');
     api.getContractId().then((id) => setContractId(id));
   }, []);
 
@@ -48,22 +47,30 @@ export const useStringReverserSmartContract = () => {
     }
   };
 
-  const embedTransaction = async (input: string) => {
-    if (!input || typeof input !== 'string') {
-      throw new Error('Input string has to be provided');
-    }
+  const embedTransaction = useCallback(
+    async (input: string) => {
+      if (!input || typeof input !== 'string') {
+        throw new Error('Input string has to be provided');
+      }
 
-    try {
-      setIsLoading(true);
-      const transactionData = await prepareTransaction(input);
-      return api.embedTransaction(transactionData as L2TransactionData);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      if (isLoading) {
+        throw new Error('Loading state is active, please wait for the previous transaction to finish.');
+      }
+
+      try {
+        setIsLoading(true);
+        const transactionData = await prepareTransaction(input);
+        return api.embedTransaction(transactionData as L2TransactionData);
+      } catch (error) {
+        console.error(error);
+        throw error;
+      } finally {
+        // Throttle subsequent execution
+        setTimeout(() => setIsLoading(false), 5000);
+      }
+    },
+    [isLoading]
+  );
 
   return {
     readClaims,

@@ -16,7 +16,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.3.6",
     "@apollo/explorer": "^3.6.0",
-    "@coinweb/wallet-lib": "^0.1.112-esm",
+    "@coinweb/wallet-lib": "^0.1.113-esm",
     "antd": "^5.16.1",
     "highlight.js": "^11.9.0",
     "p-debounce": "^4.0.0",

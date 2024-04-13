@@ -44,9 +44,11 @@ function StringProcessorSearchInput() {
               Read Claim
             </Button>
           </Form.Item>
-        </Form>
 
-        <CoinwebClaim claim={claims.at(0) as ClaimWithHandler} isLoading={isLoading} />
+          <Form.Item>
+            <CoinwebClaim claim={claims.at(0) as ClaimWithHandler} isLoading={isLoading} />
+          </Form.Item>
+        </Form>
       </Col>
     </Row>
   );

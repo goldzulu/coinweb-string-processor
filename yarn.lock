@@ -1722,10 +1722,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coinweb/wallet-lib@npm:^0.1.112-esm":
-  version: 0.1.112-esm
-  resolution: "@coinweb/wallet-lib@npm:0.1.112-esm"
-  checksum: 10c0/f450367e13ad778dedcfd2130038fc3c8c47a6db617edb25cde2813f2ebf628ddfc95e91d735aabdd92f7aa90de5ec3e6aa02071e7e16ebcfbf789aa58a24114
+"@coinweb/wallet-lib@npm:^0.1.113-esm":
+  version: 0.1.113-esm
+  resolution: "@coinweb/wallet-lib@npm:0.1.113-esm"
+  checksum: 10c0/599c7c90bb857283023f25252c82590fbde9366c08a12092b324902ba4a4bd547d8339c99de28824df6eaabdda138e0f506549b4342ff1fdba818910b66c52f2
   languageName: node
   linkType: hard
 
@@ -12535,7 +12535,7 @@ __metadata:
   dependencies:
     "@ant-design/icons": "npm:^5.3.6"
     "@apollo/explorer": "npm:^3.6.0"
-    "@coinweb/wallet-lib": "npm:^0.1.112-esm"
+    "@coinweb/wallet-lib": "npm:^0.1.113-esm"
     "@mdx-js/rollup": "npm:^3.0.1"
     "@testing-library/jest-dom": "npm:^6.4.2"
     "@testing-library/react": "npm:^14.2.1"

@@ -3,11 +3,13 @@ import pDebounce from 'p-debounce';
 import { Collapse, Button, Form, Input, Row, Col, Descriptions, Select, message } from 'antd';
 import type { FetchedClaim } from 'string-processor.cm';
 import { TOGGLE_CASER, REVERSER, DEFAULT_HANDLER_NAME, STRING_PROCESSOR_TABLE } from 'string-processor.cm';
-import type { CustomUiCommand, L2TransactionData } from '@coinweb/wallet-lib';
+import type { CustomUiCommand, L2TransactionData, WalletError } from '@coinweb/wallet-lib';
 import CoinwebClaim from './CoinwebClaim';
 import HighlightCodeBlock from './HighlightCodeBlock';
 import { useStringReverserSmartContract } from '../hooks/useStringReverserSmartContract';
 import { EMPTY_CLAIM } from '../constants';
+import { CaretRightOutlined } from '@ant-design/icons';
+import EmbedSuccessMessage from './EmbedSuccessMessage';
 
 function InputLabel() {
   return <>Enter a string that you want to be processed</>;
@@ -71,7 +73,11 @@ function StringProcessorWriteForm({ withMethodHandlerSelector }: { withMethodHan
       generateCallOpPreview(input);
       generateClaimPreview(input);
     } else {
-      setClaimPreview({ ...EMPTY_CLAIM, handler: DEFAULT_HANDLER_NAME, firstKey: STRING_PROCESSOR_TABLE });
+      setClaimPreview({
+        ...EMPTY_CLAIM,
+        handler: methodHandler || DEFAULT_HANDLER_NAME,
+        firstKey: STRING_PROCESSOR_TABLE,
+      });
     }
   };
 
@@ -79,26 +85,32 @@ function StringProcessorWriteForm({ withMethodHandlerSelector }: { withMethodHan
     generateCallOpClaimPreview(stringToBeProcessed);
   }, [stringToBeProcessed, methodHandler]);
 
+  const onSubmit = async (form: { stringToBeProcessed: string }) => {
+    const closeLoadingMessage = message.loading({ content: 'Embedding transaction' });
+    await Promise.resolve()
+      .then(() => {
+        return embedTransaction(form?.stringToBeProcessed);
+      })
+      .then((embedId) => {
+        closeLoadingMessage();
+        message.success({ content: <EmbedSuccessMessage embedId={embedId} />, duration: 6 });
+        setEmbedId(embedId);
+        return embedId;
+      })
+      .catch((error: WalletError) => {
+        closeLoadingMessage();
+        Object.entries(error).forEach(([descriptor, error]) => {
+          const errorMessage = descriptor.concat(': ', error.error || error);
+          message.error({ content: <div style={{ maxWidth: '500px' }}>{errorMessage}</div>, duration: 10 });
+        });
+      });
+  };
+
   return (
     <Row gutter={[0, 32]} style={{ width: '100%' }} justify="center">
       <Col xs={24} style={{ maxWidth: '500px' }}>
         <Descriptions title="Contract argument input" />
-        <Form
-          layout="vertical"
-          onFinish={(form) => {
-            embedTransaction(form?.stringToBeProcessed)
-              .then((embedId) => {
-                if (embedId) {
-                  message.success({ content: 'Transaction embedded successfully: '.concat(embedId), duration: 8 });
-                }
-                setEmbedId(embedId);
-                return embedId;
-              })
-              .catch((error) => {
-                message.success({ content: (error as Error).message, duration: 8 });
-              });
-          }}
-        >
+        <Form layout="vertical" onFinish={onSubmit}>
           {withMethodHandlerSelector && (
             <Form.Item name="selectMethodHandler" label={<SelectLabel />} initialValue={DEFAULT_HANDLER_NAME}>
               <Select onSelect={setMethodHandler}>
@@ -121,7 +133,7 @@ function StringProcessorWriteForm({ withMethodHandlerSelector }: { withMethodHan
             />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={isLoading}>
+            <Button type="primary" htmlType="submit" disabled={isLoading} loading={isLoading}>
               Call Contract
             </Button>
           </Form.Item>
@@ -151,18 +163,24 @@ function StringProcessorWriteForm({ withMethodHandlerSelector }: { withMethodHan
         />
       </Col>
 
-      {embedId && (
-        <Col xs={24}>
-          <Descriptions title="View transaction in explorer" />
-          <p>
-            Please follow this transaction link and wait for it to appear in the explorer. This means the transaction is
-            written to L1 AND L2.
-          </p>
-          <a href={`https://explorer-devnet.coinweb.io/?hash=${embedId}`} target="_blank" rel="noopener noreferrer">
-            {`https://explorer-devnet.coinweb.io/?hash=${embedId}`}
-          </a>
-        </Col>
-      )}
+      <Col xs={24}>
+        <Descriptions title="View transaction in explorer" />
+        <p>
+          Please follow this transaction link and wait for it to appear in the explorer. This means the transaction is
+          written to L1 AND L2.
+        </p>
+
+        <Button
+          type="primary"
+          icon={<CaretRightOutlined />}
+          disabled={!embedId}
+          onClick={() => {
+            window.open(`https://explorer-devnet.coinweb.io/?hash=${embedId}`, '_blank', 'noopener noreferrer');
+          }}
+        >
+          Open in Explorer
+        </Button>
+      </Col>
     </Row>
   );
 }
