@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Collapse, Form, Input, Row, Col, Descriptions, QRCode } from 'antd';
+import { Collapse, Form, Input, Row, Col, Descriptions } from 'antd';
 import pDebounce from 'p-debounce';
-import { ArrowDownOutlined } from '@ant-design/icons';
 import type { FetchedClaim } from 'string-processor.cm';
 import type { CustomUiCommand } from '@coinweb/wallet-lib';
 import HighlightCodeBlock from './HighlightCodeBlock';
 import CoinwebClaim from './CoinwebClaim';
 import { useStringReverserSmartContract } from '../hooks/useStringReverserSmartContract';
-import coinwebLogo from '../assets/coinweb_logo_color.svg';
 import { EMPTY_CLAIM } from '../constants';
+import ClaimQRCode from './ClaimQRCode';
 
 function InputLabel() {
   return <>Enter a string that you want to be processed</>;
@@ -108,24 +107,7 @@ function StringProcessorQRCode() {
           </Form.Item>
 
           <Form.Item>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Descriptions
-                title={
-                  <>
-                    <ArrowDownOutlined />{' '}
-                    {loadingQrCode ? 'Waiting for input value' : 'Scan QR Code with Coinweb Wallet'}{' '}
-                    <ArrowDownOutlined />
-                  </>
-                }
-              />
-
-              <QRCode
-                size={250}
-                status={(loadingQrCode && 'loading') || 'active'}
-                value={JSON.stringify({ CustomV1: callOpPreview })}
-                icon={coinwebLogo}
-              />
-            </div>
+            <ClaimQRCode value={callOpPreview} loading={loadingQrCode} />
           </Form.Item>
           <Form.Item>
             <CoinwebClaim label="CallOp arguments preview" claim={claimPreview} isLoading={isLoading} />
