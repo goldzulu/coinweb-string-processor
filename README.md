@@ -1,96 +1,46 @@
-# Default Skeleton App for create-coinweb-dapp
+# String Processor Tutorial
 
-Welcome to the default skeleton app for create-coinweb-dapp! This project
-serves as a starting point for building your own decentralized applications
-using Coinweb's technology.
+Welcome to an interactive tutorial on Coinweb's
+[reactive smart contracts](https://docs.coinweb.io/develop/reactive-smart-contracts/)!
 
-## Building and deploying:
+## Introduction
 
-Build the Javascript based smart contract example using `yarn build`. This
-command will build, package, and deploy the required `actions` to get the smart
-contract registered and available on-chain:
+In this comprehensive guide, we'll embark on a journey through the creation,
+deployment, and interaction with a smart contract designed to reverse strings
+and record claims in the Coinweb database. Our tutorial is structured to
+gradually increase in complexity, ensuring a smooth learning curve.
 
-```
-$ yarn build
-...
-Transaction ID:  f116fc3046c43c2223e4d6d1fd0566db9b97b5bd909f4a05362f79ca5e2ba341
-Transaction URL: https://explorer-devnet.coinweb.io/?hash=f116fc3046c43c2223e4d6d1fd0566db9b97b5bd909f4a05362f79ca5e2ba341
-...
-```
+- We'll start by crafting a simple string processor contract. You'll learn how
+  to use the command-line interface (CLI) of the `@coinweb/cweb-tool` to invoke
+  a pre-defined contract template in YAML format, which will handle the string
+  processing and basic CRUD operations with regards to claims storage. Once
+  deployed, we'll guide you through the process of retrieving and verifying
+  these claims directly from the user interface (UI) by searching for the stored
+  claim.
 
-Transactions that need to be executed are shown in the output, but since smart
-contracts that have already been deployed need not be deployed again, there is
-usually nothing that needs to be done wrt deploying and registering the smart
+- Next, we'll elevate the complexity by showing you how to call the contract
+  from the UI itself, providing method arguments for string processing. After
+  the contract execution, you'll revisit the claims to observe the changes in
+  Coinweb's claims DB.
+
+- Afterwards, we'll integrate the Coinweb wallet app into our workflow. You'll
+  prepare the contract call operation in the frontend, and then use Coinweb's
+  wallet app to execute the contract call securely.
+
+By the end of this tutorial, you'll have a solid understanding of reactive smart
+contracts and the confidence to build and interact with them in various ways.
+Let us get started on this adventure into the world of reactive smart contracts!
+
+## Scope
+
+This tutorial is designed to cover the basics of Coinweb's reactive smart
 contracts.
 
-However, if you change anything in the smart contract examples, new transactions
-for the updated smart contracts will have to be broadcasted.
+- `StoreOp` - Store a claim into the database owned by the transaction issuer
+- `CallOp` - Invocation of a smart contract
+- Reading claims from GraphQL/Devnet API
+- Onchain code and method handlers
 
-## Example contract modules
-
-### String Processor
-
-```
-./packages/string-processor.cm
-```
-
-This contract module contains a smart contract that simply writes a claim that consists of processed strings. The offchain "app" contains code to fetch and display the claim.
-
-### Token Creator
-
-```
-./packages/token-creator.cm
-```
-
-This contract module contains a smart contract that creates a token (from parameters),
-and after successful creation, calls back into itself.
-
-## Call string-processor smart contract example
-
-You can invoke your smart contracts by running `yarn workspace string-processor.cm
-call-contract`. This will create a claim that contains "string-processor" in devnet.
-
-The `yarn workspace string-processor.cm call-contract` command will create a
-transaction that calls the smart contract. This is done by creating a
-`call.yaml` file based on the `call.yaml.template` (replacing the contract id).
-Then it calls `cweb-tool call ...` which creates a transaction that invokes the
-smart contract with the arguments specified in `call.yaml` (currently no
-arguments are specified there).
-
-```
-$ yarn workspace string-processor.cm call-contract
-
-...
-Transaction ID:  f116fc3046c43c2223e4d6d1fd0566db9b97b5bd909f4a05362f79ca5e2ba341
-Transaction URL: https://explorer-devnet.coinweb.io/?hash=f116fc3046c43c2223e4d6d1fd0566db9b97b5bd909f4a05362f79ca5e2ba341
-...
-```
-
-## Check the result
-
-The smart contract example writes a "hello world" claim (key: [1, 4], value:
-"hello world", fees: 0) that we can read using the normal npm package that uses
-the `@coinweb/wallet-lib` to read this claim from the devnet.
-
-```
-$ yarn workspace string-processor.cm start
-```
-
-## Scripts
-
-Here are the commands you can run, as defined in the `package.json` file:
-
-- `yarn build`: Runs the build command, packs the project, creates an index, and publishes actions.
-- `yarn pack:cweb`: Packs the project using the cweb-tool.
-- `yarn pack:yarn`: Packs the project using yarn.
-- `yarn create-index`: Creates an index using the cweb-tool.
-- `yarn gather-actions`: Gathers actions using the cweb-tool.
-- `yarn filter-actions`: Filters actions using the cweb-tool.
-- `yarn execute-actions`: Executes actions using the cweb-tool.
-- `yarn publish-actions`: Publishes actions using the cweb-tool.
-- `yarn call-contract`: Calls all contracts in all workspaces using the cweb-tool.
-- `yarn clean`: Cleans the project.
-
-Running `yarn build` will execute most of these commands and publish your smart contract.
-
-The project in `offchain/*` contains a small program that will read the claim written by the smart contract. Enjoy building your dApp!
+Please checkout other tutorials if you want to learn about `DataOp`, `ReadOp`,
+`TakeOp`, `BlockOp`. These operations add too much complexity to the scope of
+this tutorial and are granularly covered in other tutorials.
