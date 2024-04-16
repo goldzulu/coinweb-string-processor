@@ -1,3 +1,8 @@
+import {
+  GooglePlayButton,
+  AppStoreButton,
+  ButtonsContainer,
+} from 'react-mobile-app-button';
 import StringProcessorQRCode from '../components/StringProcessorQRCode';
 import StringProcessorSearchInput from '../components/StringProcessorSearchInput';
 
@@ -13,9 +18,20 @@ There are other ways to embed the L2 transaction without exposing the seed
 phrase, but rely on the wallet of a user. For example a user could call a smart
 contract with the help of our official Coinweb wallet app.
 
-https://play.google.com/store/apps/details?id=com.coinwebapp&hl=en&gl=US&pli=1
+<br/>
+<ButtonsContainer>
+    <AppStoreButton
+    url="https://apps.apple.com/us/app/coinweb-wallet/id6443891261"
+    theme={"dark"}
+    />
+    
+    <GooglePlayButton
+    url="https://play.google.com/store/apps/details?id=com.coinwebapp&hl=en&gl=US&pli=1"
+    theme={"dark"}
+    />
 
-https://apps.apple.com/us/app/coinweb-wallet/id6443891261
+</ButtonsContainer>
+<br/>
 
 ## Call the Contract by Scanning a QR Code
 

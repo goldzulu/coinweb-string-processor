@@ -56,10 +56,9 @@ function stringToggleCaser(...stringsToToggleCase: string[]): string {
 }
 
 function stringProcessor(body: string | string[]): string {
-  const stringsToProcess = Array.isArray(body)
-    ? stringReverser(...body)
-    : stringReverser(body);
-  return stringToggleCaser(stringReverser(stringsToProcess));
+  return stringToggleCaser(
+    stringReverser(...(Array.isArray(body) ? body : [body]))
+  );
 }
 ```
 

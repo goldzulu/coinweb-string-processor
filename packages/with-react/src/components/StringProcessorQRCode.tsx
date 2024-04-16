@@ -9,10 +9,6 @@ import { useStringReverserSmartContract } from '../hooks/useStringReverserSmartC
 import { EMPTY_CLAIM } from '../constants';
 import ClaimQRCode from './ClaimQRCode';
 
-function InputLabel() {
-  return <>Enter a string that you want to be processed</>;
-}
-
 function StringProcessorQRCode() {
   const [loadingQrCode, setLoadingQrCode] = useState<boolean>(true);
   const [claimPreview, setClaimPreview] = useState<FetchedClaim & { handler: string }>({
@@ -89,7 +85,7 @@ function StringProcessorQRCode() {
         <Form layout="vertical">
           <Form.Item
             name="stringToBeProcessed"
-            label={<InputLabel />}
+            label="Enter a string that you want to be processed"
             rules={[{ required: true, message: 'Please input a string to process!' }]}
           >
             <Input
