@@ -26,13 +26,16 @@ export const useStringReverserSmartContract = () => {
     }
   };
 
-  const generateCallOp = (input: string) => {
-    try {
-      return api.generateCallOp(input, methodHandler);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const generateCallOp = useCallback(
+    (input: string) => {
+      try {
+        return api.generateCallOp(input, methodHandler);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [methodHandler]
+  );
 
   const prepareTransaction = async (input: string) => {
     if (!input || typeof input !== 'string') {
@@ -47,30 +50,27 @@ export const useStringReverserSmartContract = () => {
     }
   };
 
-  const embedTransaction = useCallback(
-    async (input: string) => {
-      if (!input || typeof input !== 'string') {
-        throw new Error('Input string has to be provided');
-      }
+  const embedTransaction = async (input: string) => {
+    if (!input || typeof input !== 'string') {
+      throw new Error('Input string has to be provided');
+    }
 
-      if (isLoading) {
-        throw new Error('Loading state is active, please wait for the previous transaction to finish.');
-      }
+    if (isLoading) {
+      throw new Error('Loading state is active, please wait for the previous transaction to finish.');
+    }
 
-      try {
-        setIsLoading(true);
-        const transactionData = await prepareTransaction(input);
-        return api.embedTransaction(transactionData as L2TransactionData);
-      } catch (error) {
-        console.error(error);
-        throw error;
-      } finally {
-        // Throttle subsequent execution
-        setTimeout(() => setIsLoading(false), 5000);
-      }
-    },
-    [isLoading]
-  );
+    try {
+      setIsLoading(true);
+      const transactionData = await prepareTransaction(input);
+      return api.embedTransaction(transactionData as L2TransactionData);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    } finally {
+      // Throttle subsequent execution
+      setTimeout(() => setIsLoading(false), 5000);
+    }
+  };
 
   return {
     readClaims,
