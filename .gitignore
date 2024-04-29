@@ -23,6 +23,8 @@ tmp
 unsafe_wallet_mnenonic
 unsafe_wallet_mnemonic
 .unfiltered-actions.yaml
+.actions.yaml
+
 
 install-state.gz
 
