@@ -21,32 +21,22 @@
   },
   "dependencies": {
     "@coinweb/contract-kit": "^0.0.28",
-    "@coinweb/self-register": "^0.0.28",
-    "@coinweb/wallet-lib": "^0.1.112-esm"
+    "@coinweb/self-register": "^0.0.29",
+    "@coinweb/wallet-lib": "^0.1.113-esm"
   },
   "main": "dist/out/cweb_dist/offchain/index.js",
   "engines": {
-    "cweb_interpreter": "a59bfe9f094338753e18fe1ddf35ea3359a8a97f75c24418b1822c69770337ea"
+    "cweb_interpreter": "08d22589d92093f8cc56922a7d00d8227d4c9247e4f55672d2dca613a66b52c9"
   },
   "devDependencies": {
-    "@babel/cli": "^7.23.9",
-    "@babel/core": "^7.24.0",
-    "@babel/node": "^7.23.9",
-    "@babel/plugin-syntax-bigint": "^7.8.3",
-    "@babel/preset-env": "^7.24.0",
     "@coinweb/cweb-tool": "1.0.32",
     "@types/lodash": "^4.17.0",
-    "@types/node": "^20.11.28",
-    "babel-plugin-extract-text": "^2.0.0",
-    "babel-plugin-transform-bigint-to-jsbi": "^1.0.3",
-    "babelify": "^10.0.0",
+    "@types/node": "^20.12.7",
     "esbuild": "^0.20.2",
     "js-yaml": "^4.1.0",
-    "jsbi": "^4.3.0",
     "lodash": "^4.17.21",
-    "replace": "^1.2.2",
-    "typescript": "^5.4.2",
-    "vitest": "^1.4.0",
+    "typescript": "^5.4.5",
+    "vitest": "^1.5.2",
     "write-yaml-file": "^5.0.0"
   }
 }
