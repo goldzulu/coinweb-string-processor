@@ -30,6 +30,7 @@ module.exports = {
     'prettier/prettier': 2,
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'react-hooks/exhaustive-deps': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
     'no-console': 'warn',
   },
 };

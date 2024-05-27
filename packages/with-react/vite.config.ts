@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import mdx from '@mdx-js/rollup';
 import react from '@vitejs/plugin-react';
 import wasm from 'vite-plugin-wasm';
+import topLevelAwait from 'vite-plugin-top-level-await';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import rehypeHighlight from 'rehype-highlight';
 
@@ -13,8 +14,8 @@ import ts from 'highlight.js/lib/languages/typescript';
 import gql from 'highlight.js/lib/languages/graphql';
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  build: { target: 'esnext' },
+const config = defineConfig({
+  build: { target: 'modules' },
   plugins: [
     mdx({
       rehypePlugins: [
@@ -29,6 +30,7 @@ export default defineConfig({
     }),
     react(),
     wasm(),
+    topLevelAwait(),
     nodePolyfills({
       globals: {
         Buffer: true, // can also be 'build', 'dev', or false
@@ -59,3 +61,5 @@ export default defineConfig({
     },
   },
 });
+
+export default config;
