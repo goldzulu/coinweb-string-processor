@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 
 declare const __API_URL__: string;
+declare const __BASE_URL__: string;
 
 // types/mdx.d.ts
 declare module '*.mdx' {
@@ -10,7 +11,7 @@ declare module '*.mdx' {
 
 interface ImportMetaEnv {
   readonly VITE_API_ENDPOINT: string;
-  readonly __API_URL__: string;
+  readonly VITE_BASE_URL: string;
   // more env variables...
 }
 

@@ -3,19 +3,23 @@ import kebabCase from 'lodash/kebabCase';
 import MainLayout from './containers/MainLayout';
 import routes from './routes';
 
-const baseUrl = import.meta.env.BASE_URL;
+const routerOptions = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  basename: ((window as any).__BASE_URL__ || '/') as string,
+};
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
-      <Route path={baseUrl} element={<MainLayout />}>
+      <Route path={'/'} element={<MainLayout />}>
         <Route index element={Object.entries(routes).at(0)?.at(1)} />
         {Object.entries(routes).map(([routeKey, component]) => {
-          return <Route key={kebabCase(routeKey)} path={baseUrl.concat(kebabCase(routeKey))} element={component} />;
+          return <Route key={kebabCase(routeKey)} path={kebabCase(routeKey)} element={component} />;
         })}
       </Route>
     </Route>
-  )
+  ),
+  routerOptions
 );
 
 const App = () => {

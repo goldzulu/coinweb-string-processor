@@ -19,14 +19,7 @@ const config = defineConfig({
   build: { target: 'modules' },
   plugins: [
     mdx({
-      rehypePlugins: [
-        [
-          rehypeHighlight,
-          {
-            languages: { json, bash, yaml, ts, gql },
-          },
-        ],
-      ],
+      rehypePlugins: [[rehypeHighlight, { languages: { json, bash, yaml, ts, gql } }]],
       remarkPlugins: [],
     }),
     react(),
@@ -34,19 +27,19 @@ const config = defineConfig({
     topLevelAwait(),
     nodePolyfills({
       globals: {
-        Buffer: true, // can also be 'build', 'dev', or false
+        Buffer: true,
         global: true,
         process: true,
       },
       include: ['events', 'buffer', 'crypto', 'stream', 'vm'],
     }),
   ],
-
   server: {
     port: 3000,
   },
   define: {
-    __API_URL__: JSON.stringify(process.env.API_ENDPOINT_DEVNET),
+    __API_URL__: JSON.stringify(process.env.API_ENDPOINT_DEVNET || process.env.VITE_API_ENDPOINT),
+    __BASE_URL__: JSON.stringify(process.env.VITE_BASE_URL),
   },
   test: {
     globals: true,
