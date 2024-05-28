@@ -15,6 +15,7 @@ import gql from 'highlight.js/lib/languages/graphql';
 
 // https://vitejs.dev/config/
 const config = defineConfig({
+  base: process.env.VITE_BASE_URL || '/',
   build: { target: 'modules' },
   plugins: [
     mdx({
