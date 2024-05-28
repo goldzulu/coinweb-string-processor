@@ -2,6 +2,7 @@ import { ArrowDownOutlined } from '@ant-design/icons';
 import { Descriptions, Flex, QRCode } from 'antd';
 import coinwebLogo from '../assets/coinweb_logo_color.svg';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ClaimQRCode({ value, loading }: { value: any; loading: boolean }) {
   return (
     <Flex vertical>

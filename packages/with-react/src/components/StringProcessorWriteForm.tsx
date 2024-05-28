@@ -54,6 +54,7 @@ function StringProcessorWriteForm({ withMethodHandlerSelector }: { withMethodHan
     pDebounce(async (input: string) => {
       await generateCallOp(input)?.then((callOp) => {
         if (callOp) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const { data } = (callOp.calls.at(0) as { contract_input: { data: any[] } })?.contract_input || {};
           setClaimPreview({
             handler: data.at(0),

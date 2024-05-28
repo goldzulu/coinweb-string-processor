@@ -90,10 +90,10 @@ const MainLayout = () => {
       </Content>
       <Footer>
         <Flex align="center" vertical={true} gap="small">
-          {/* eslint-disable-next-line */}
           <div>
-            API endpoint:{' '}
+            API endpoint: {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <a href={(window as any).__API_URL__} target="_blank" rel="noreferrer noopener">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
               {(window as any).__API_URL__}
             </a>
           </div>

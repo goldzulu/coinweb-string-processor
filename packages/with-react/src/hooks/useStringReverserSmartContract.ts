@@ -31,6 +31,7 @@ export const useStringReverserSmartContract = () => {
       try {
         return api.generateCallOp(input, methodHandler);
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error(error);
       }
     },
@@ -46,6 +47,7 @@ export const useStringReverserSmartContract = () => {
       const callOp = await generateCallOp(input);
       return api.prepareTransaction(callOp as CustomUiCommand);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   };
@@ -64,6 +66,7 @@ export const useStringReverserSmartContract = () => {
       const transactionData = await prepareTransaction(input);
       return api.embedTransaction(transactionData as L2TransactionData);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error);
       throw error;
     } finally {
