@@ -7,7 +7,6 @@
     "dev": "vite",
     "typecheck": "tsc --noEmit",
     "build": "tsc -p ./tsconfig.build.json && vite build",
-    "build:for-coinweb-docs": "VITE_BASE_URL=/tutorials/string-processor-tutorial/ yarn build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest run",
     "test:watch": "vitest",

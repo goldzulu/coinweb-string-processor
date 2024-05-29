@@ -13,6 +13,12 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --ifm-code-background: #f6f7f8; /* Example background color */
+  --ifm-code-border-radius: 0.4rem; /* Example border radius */
+  --ifm-code-font-size: 95%; /* Example font size */
+  --ifm-code-padding-vertical: 0.1rem; /* Example vertical padding */
+  --ifm-code-padding-horizontal: 0.1rem; /* Example horizontal padding */
 }
 
 body {
@@ -25,6 +31,13 @@ h1 {
 
 p {
   margin: 10px 0;
+}
+
+code {
+  background-color: var(--ifm-code-background);
+  border-radius: var(--ifm-code-border-radius);
+  font-size: var(--ifm-code-font-size);
+  padding: var(--ifm-code-padding-vertical) var(--ifm-code-padding-horizontal);
 }
 
 .logo {
