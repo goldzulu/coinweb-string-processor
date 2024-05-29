@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 if (typeof window !== 'undefined') {
   if (import.meta.env.PROD) {
     // Enforce global variables from .env in production here

@@ -1,14 +1,9 @@
-import { Route, createRoutesFromElements, createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { Route, createRoutesFromElements, RouterProvider, createHashRouter } from 'react-router-dom';
 import kebabCase from 'lodash/kebabCase';
 import MainLayout from './containers/MainLayout';
 import routes from './routes';
 
-const routerOptions = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  basename: ((window as any).__BASE_URL__ || '/') as string,
-};
-
-const router = createBrowserRouter(
+const router = createHashRouter(
   createRoutesFromElements(
     <Route>
       <Route path={'/'} element={<MainLayout />}>
@@ -18,8 +13,7 @@ const router = createBrowserRouter(
         })}
       </Route>
     </Route>
-  ),
-  routerOptions
+  )
 );
 
 const App = () => {
