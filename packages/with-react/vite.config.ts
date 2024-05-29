@@ -1,5 +1,4 @@
-/// <reference types="vitest" />
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import mdx from '@mdx-js/rollup';
 import react from '@vitejs/plugin-react';
 import wasm from 'vite-plugin-wasm';
