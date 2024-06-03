@@ -11,6 +11,8 @@ import CallSingleMethodHandler from './pages/CallSingleMethodHandler.mdx';
 import End from './pages/End.mdx';
 
 // Order equals the steps in the tutorial
+// Keys become the url paths in the tutorial
+// Values render the content for each step
 export default {
   Start: <Start />,
   CreateContract: <CreateContract />,
