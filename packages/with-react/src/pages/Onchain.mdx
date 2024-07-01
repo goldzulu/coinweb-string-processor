@@ -1,16 +1,19 @@
 # String Processor Contract Module
 
-Traditionally the reactive smart contract is divided in the onchain and offchain
-part. The onchain part is the smart contract itself, which is deployed on the
-Coinweb network. The offchain part is the client side (or server side) code,
-which interacts with the smart contract. The offchain part is not deployed on
-the Coinweb network nor any blockchain, but runs on the dApp's side or its
-ecosystem. The offchain part can provide an API for the user interface etc.
+By convention smart contract are grouped on what in coinweb is called "contract-module". 
+A contract-module is made out of two parts, the onchain code and the offchain code
+The onchain part is the smart contract itself, which is registered on the
+blockchain and eventually run by the coinweb runtime. 
+The offchain part is the client side (or server side) code,
+which interacts with the smart contract. The offchain part as a whole is not registered on
+on blockchain, but a hash digest of it is stored as a file within the smartcontract, which means that 
+we can use any untrusted package mirror as the source of the offchain code and still be safe
+that it is the intended original code related to an specific contract-id.
 
 ## Onchain.js
 
-Let's take a look at the onchain part of the string-processor smart contract
-module. As the name suggests, the onchain part should be written in Javascript
+Let's take a look at the onchain part of the string-processor contract-module. 
+As the name suggests, the onchain part should be written in Javascript
 (Typescript) and is supposed to reverse a string. Our main goal therefore is to
 create a reactive smart contract that receives a string, processes it by
 reversing it and finally saving it in Coinweb's claims DB.
@@ -141,11 +144,11 @@ gas will be needed in order to publish and store it on the Coinweb network.
 
 ## Offchain.js
 
-The offchain code is the part of the smart contract that is not deployed on
+The offchain code is the part of the smart contract that is not registered on
 Coinweb. Generally the offchain code provides ways to interact with the smart
 contract. Nevertheless the smart contract depends on the offchain code as its
 reference is used while creating a hash (=contract_id) of the contract. Meaning
 changes to the offchain code will result in a new contract_id and therefore in a
-new smart contract that will have to be redeployed.
+new smart contract that will have to be reregister.
 
 The offchain part will be explained part by part in the upcoming sections.
