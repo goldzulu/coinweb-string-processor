@@ -1,10 +1,10 @@
-# Deployment of a Reactive Smart Contract
+# Registring a Coinweb Smart Contract
 
 The _deploy_ step involves publishing the smart contract to the Coinweb network.
 This step requires a connection to a wallet GraphQL endpoint and the
 `@coinweb/cweb-tool` package. The SDK registers the onchain code with the
 provided method handlers, which will be used and explained in the upcoming
-sections. The Coinweb SDK provides a simple way to deploy a smart contract to
+sections. The Coinweb SDK provides a simple way to register a smart contract to
 the network.
 
 ## Setup the API Endpoint
@@ -18,9 +18,9 @@ of your project.
 API_ENDPOINT_DEVNET=https://api-devnet.coinweb.io/wallet
 ```
 
-## Deploy a Smart Contract
+## Register a Smart Contract
 
-The contract modules are preconfigured in such way that they can be deployed
+The contract modules are preconfigured in such way that they can be registered
 with the following command:
 
 ```bash
@@ -116,13 +116,29 @@ contract_templates: {}
 
 ### Contract Issuer
 
-After successfully publishing a smart contract to the network, the contract
-receives an `id` also referred to as `issuer`, which in return is a hash of
-files and configurations. This means any changes to your onchain code, or
-offchain code therefore, will result in a new hash, `id`, for the contract.
+In coinweb, the contract-id is defined as the hash of the files that are loaded
+to the Wasm Vm when a call to contract is invoked. This contract-id is computed 
+independent of how those files are loaded.
 
-- Issuer: The creator of the claim, typically a smart contract (id).
+This means any changes to your onchain code, or offchain code therefore, will 
+result in a new hash, `id`, for the contract.
+
+When we register an smartcontract, under the hood, what we do is:
+
+- Store onchain the files that will define the smartcontract, such the wasm-bytecode 
+  plus any embedded file to be used as configuration or interpreted code.
+
+- Create an index so given a hash (the contract-id), we can find out which 
+  files needs to be loaded to produce it.
+
+
+
+### Claim Issuer:
+
+The creator of the claim, typically a smart contract (id).
+
+
 
 You can find the current contract's id in the footer of this tutorial. It is
-created during the build phase, and after deployment it must be referenced in
+created during the build phase, and after registration it must be referenced in
 any related call operations.

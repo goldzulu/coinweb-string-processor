@@ -33,8 +33,7 @@ Let us get started on this adventure into the world of reactive smart contracts!
 
 ## Scope
 
-This tutorial is designed to cover the basics of Coinweb's reactive smart
-contracts.
+This tutorial is designed to cover the basics of Coinweb's smart contracts.
 
 - `StoreOp` - Store a claim into the database owned by the transaction issuer
 - `CallOp` - Invocation of a smart contract
