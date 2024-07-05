@@ -26,11 +26,11 @@ function StringProcessorClaimsTable() {
 
   useEffect(() => {
     readClaims()
-      .then(() => {
-        message.success({ content: 'Claims loaded.', duration: 4 });
+      .then(async () => {
+        await message.success({ content: 'Claims loaded.', duration: 4 });
       })
-      .catch((error) => {
-        message.error({ content: (error as Error).message, duration: 4 });
+      .catch(async (error) => {
+        await message.error({ content: (error as Error).message, duration: 4 });
       });
   }, []);
 

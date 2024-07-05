@@ -8,9 +8,9 @@ function EmbedSuccessMessage({ embedId }: { embedId: string }) {
       <Col>
         <Tag
           style={{ cursor: 'pointer' }}
-          onClick={() => {
-            navigator.clipboard.writeText(embedId);
-            message.success('Copied ID to clipboard');
+          onClick={async () => {
+            await navigator.clipboard.writeText(embedId);
+            await message.success('Copied ID to clipboard');
           }}
         >
           {embedId}

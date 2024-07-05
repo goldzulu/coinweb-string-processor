@@ -1,27 +1,28 @@
-import type { NewTx, Context, ContractHandlers } from "@coinweb/contract-kit";
+import type { NewTx, Context, ContractHandlers } from '@coinweb/contract-kit';
 import {
   getContractId,
-  continueTx,
   passCwebFrom,
-  contractIssuer,
-  store,
-  genericClaim,
-  claimKey,
   toHex,
   addMethodHandler,
   SELF_REGISTER_HANDLER_NAME,
   executeHandler,
   getMethodArguments,
   DEFAULT_HANDLER_NAME,
-} from "@coinweb/contract-kit";
-import { selfRegisterHandler } from "@coinweb/self-register";
-import { REVERSER, TOGGLE_CASER } from "../offchain/constants";
+  constructContinueTx,
+  constructStore,
+  constructContractIssuer,
+  constructClaim,
+  constructClaimKey,
+} from '@coinweb/contract-kit';
+import { selfRegisterHandler } from '@coinweb/self-register';
+import { REVERSER, TOGGLE_CASER } from '../offchain/constants';
+import { type MethodArguments } from '../offchain';
 
 function stringReverser(...stringsToReverse: string[]): string {
   return stringsToReverse
     .flat(Infinity)
-    .map((str) => str.trim().split("").reverse().join(""))
-    .join(" ");
+    .map((str) => str.trim().split('').reverse().join(''))
+    .join(' ');
 }
 
 function stringToggleCaser(...stringsToToggleCase: string[]): string {
@@ -29,35 +30,35 @@ function stringToggleCaser(...stringsToToggleCase: string[]): string {
     let spacesCounter = 0;
     return str
       .trim()
-      .replace(/\s+/g, " ")
-      .split("")
+      .replace(/\s+/g, ' ')
+      .split('')
       .map((char, idx) => {
-        if (char === " ") {
+        if (char === ' ') {
           spacesCounter += 1;
           return char;
         }
         return (idx - spacesCounter) % 2 > 0 ? char.toUpperCase() : char.toLowerCase();
       })
-      .join("");
+      .join('');
   }
 
-  return stringsToToggleCase.flat(Infinity).map(toggleCaseString).join(" ");
+  return stringsToToggleCase.flat(Infinity).map(toggleCaseString).join(' ');
 }
 
 const withValidateInputArguments = (processor: (context: Context) => NewTx[]) => (context: Context) => {
-  const [, secondPart, body] = getMethodArguments(context).slice(1);
-  if (typeof secondPart !== "string") {
-    throw new Error("Invalid arguments, second key part must be a string");
+  const [, secondPart, body] = (getMethodArguments(context) as MethodArguments).slice(1);
+  if (typeof secondPart !== 'string') {
+    throw new Error('Invalid arguments, second key part must be a string');
   }
   if (Array.isArray(body)) {
     if (body.length < 1) {
-      throw new Error("Invalid arguments, body must be an array and contain at least one string to reverse");
+      throw new Error('Invalid arguments, body must be an array and contain at least one string to reverse');
     }
-    if (body.some((arg) => typeof arg !== "string")) {
-      throw new Error("Invalid arguments, body array must be composed of strings");
+    if (body.some((arg) => typeof arg !== 'string')) {
+      throw new Error('Invalid arguments, body array must be composed of strings');
     }
-  } else if (typeof body !== "string") {
-    throw new Error("Invalid arguments, body must be a string or an array of strings");
+  } else if (typeof body !== 'string') {
+    throw new Error('Invalid arguments, body must be a string or an array of strings');
   }
 
   return processor(context);
@@ -71,12 +72,12 @@ function processStrings(context: Context): NewTx[] {
   const { tx } = context;
   const contractId = getContractId(tx);
 
-  const [firstPart, secondPart, body] = getMethodArguments(context).slice(1);
+  const [firstPart, secondPart, body] = (getMethodArguments(context) as MethodArguments).slice(1);
 
   return [
-    continueTx([
-      passCwebFrom(contractIssuer(contractId), 200),
-      store(genericClaim(claimKey(firstPart, secondPart), stringProcessor(body), toHex(0))),
+    constructContinueTx(context, [
+      passCwebFrom(constructContractIssuer(contractId), 200n),
+      constructStore(constructClaim(constructClaimKey(firstPart, secondPart), stringProcessor(body), toHex(0n))),
     ]),
   ];
 }
@@ -85,16 +86,16 @@ function onlyReverse(context: Context): NewTx[] {
   const { tx } = context;
   const contractId = getContractId(tx);
 
-  const [firstPart, secondPart, body] = getMethodArguments(context).slice(1);
+  const [firstPart, secondPart, body] = (getMethodArguments(context) as MethodArguments).slice(1);
 
   return [
-    continueTx([
-      passCwebFrom(contractIssuer(contractId), 200),
-      store(
-        genericClaim(
-          claimKey(firstPart, secondPart),
+    constructContinueTx(context, [
+      passCwebFrom(constructContractIssuer(contractId), 200n),
+      constructStore(
+        constructClaim(
+          constructClaimKey(firstPart, secondPart),
           Array.isArray(body) ? stringReverser(...body) : stringReverser(body),
-          toHex(0)
+          toHex(0n)
         )
       ),
     ]),
@@ -105,16 +106,16 @@ function onlyToggleCase(context: Context): NewTx[] {
   const { tx } = context;
   const contractId = getContractId(tx);
 
-  const [firstPart, secondPart, body] = getMethodArguments(context).slice(1);
+  const [firstPart, secondPart, body] = (getMethodArguments(context) as MethodArguments).slice(1);
 
   return [
-    continueTx([
-      passCwebFrom(contractIssuer(contractId), 200),
-      store(
-        genericClaim(
-          claimKey(firstPart, secondPart),
+    constructContinueTx(context, [
+      passCwebFrom(constructContractIssuer(contractId), 200n),
+      constructStore(
+        constructClaim(
+          constructClaimKey(firstPart, secondPart),
           Array.isArray(body) ? stringToggleCaser(...body) : stringToggleCaser(body),
-          toHex(0)
+          toHex(0n)
         )
       ),
     ]),

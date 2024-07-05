@@ -23,5 +23,5 @@
     "noFallthroughCasesInSwitch": true,
     "types": ["vitest/globals"]
   },
-  "include": ["src", "vitest.setup.ts", "vite-env.d.ts"]
+  "include": ["src", "vitest.setup.ts", "vite-env.d.ts", "vite.config.ts"]
 }

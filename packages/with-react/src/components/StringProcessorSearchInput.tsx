@@ -1,6 +1,6 @@
 import { Button, Form, Input, Tag, Row, Col, Descriptions, message } from 'antd';
 import { useStringReverserSmartContract } from '../hooks/useStringReverserSmartContract';
-import CoinwebClaim, { type ClaimWithHandler } from './CoinwebClaim';
+import CoinwebClaim from './CoinwebClaim';
 
 function InputLabel() {
   return (
@@ -20,10 +20,10 @@ function StringProcessorSearchInput() {
   const onSubmit = (form: { claimSearchInput: string }) => {
     readClaims(form?.claimSearchInput)
       .then(() => {
-        message.success({ content: 'Claim loaded.', duration: 5 });
+        void message.success({ content: 'Claim loaded.', duration: 5 });
       })
       .catch((error) => {
-        message.error({ content: (error as Error).message, duration: 5 });
+        void message.error({ content: (error as Error).message, duration: 5 });
       });
   };
 
@@ -46,7 +46,7 @@ function StringProcessorSearchInput() {
           </Form.Item>
 
           <Form.Item>
-            <CoinwebClaim claim={claims.at(0) as ClaimWithHandler} isLoading={isLoading} />
+            <CoinwebClaim claim={claims.at(0) || null} isLoading={isLoading} />
           </Form.Item>
         </Form>
       </Col>

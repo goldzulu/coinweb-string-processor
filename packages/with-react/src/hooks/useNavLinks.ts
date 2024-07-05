@@ -2,6 +2,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import kebabCase from 'lodash/kebabCase';
 import routes from '../routes';
 
+type NavLinkItem = { key: string; label: string; onClick: () => void };
+
 const useNavLinks = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,7 +34,7 @@ const useNavLinks = () => {
         onClick: () => navigate('/'.concat(kebabCase(routeKey))),
       };
     })
-  );
+  ) as NavLinkItem[];
 
   const activeRouteIndex = navLinkItems.findIndex((i, idx) => {
     const pathname = location.pathname.replace('/', '');

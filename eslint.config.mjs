@@ -1,4 +1,3 @@
-/* eslint-disable */
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import eslintConfigPrettier from 'eslint-config-prettier';
@@ -30,8 +29,12 @@ export default tseslint.config(
   { ...eslintConfigPrettier },
 
   // typescript
-  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.recommendedTypeChecked.map((config) => ({
+    ...config,
+    files: ['**/*.ts', '**/*.tsx'], // We use TS config only for TS files
+  })),
   {
+    files: ['**/*.ts', '**/*.tsx'], // We use TS config only for TS files
     plugins: {
       '@typescript-eslint': tseslint.plugin,
     },
@@ -51,6 +54,11 @@ export default tseslint.config(
   // react
   {
     ...eslintPluginReact,
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
     rules: {
       ...eslintPluginReact.rules,
       'react/react-in-jsx-scope': 'off',

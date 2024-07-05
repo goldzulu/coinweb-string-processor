@@ -39,6 +39,7 @@ const config = defineConfig({
   define: {
     __API_URL__: JSON.stringify(process.env.API_ENDPOINT_DEVNET || process.env.VITE_API_ENDPOINT),
     __BASE_URL__: JSON.stringify(process.env.VITE_BASE_URL),
+    __EXPLORER_URL__: JSON.stringify(process.env.EXPLORER_URL_DEVNET),
   },
   test: {
     globals: true,

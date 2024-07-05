@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Collapse, Form, Input, Row, Col, Descriptions } from 'antd';
 import pDebounce from 'p-debounce';
-import type { FetchedClaim } from 'string-processor.cm';
+import type { FetchedClaim, MethodArguments } from 'string-processor.cm';
 import type { CustomUiCommand } from '@coinweb/wallet-lib';
 import HighlightCodeBlock from './HighlightCodeBlock';
 import CoinwebClaim from './CoinwebClaim';
@@ -21,41 +21,36 @@ function StringProcessorQRCode() {
   const { generateCallOp, isLoading } = useStringReverserSmartContract();
 
   const prepareCallOpPreview = useCallback(
-    pDebounce(async (input: string) => {
+    pDebounce((input: string) => {
       if (!input) {
         setCallOpPreview(null);
       } else {
-        await generateCallOp(input)?.then((callOp) => {
-          if (callOp) setCallOpPreview(callOp);
-        });
+        const callOp = generateCallOp(input);
+        if (callOp) setCallOpPreview(callOp);
       }
     }, 150),
     []
   );
 
-  const prepareClaimPreview = async (input: string) => {
+  const prepareClaimPreview = (input: string) => {
     if (!input) {
       setClaimPreview({ ...EMPTY_CLAIM, handler: 'DEFAULT' });
     } else {
-      await generateCallOp(input)?.then((callOp) => {
-        if (callOp) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const { data } = (callOp.calls.at(0) as { contract_input: { data: any[] } })?.contract_input || {};
-          setClaimPreview({
-            handler: data.at(0),
-            firstKey: data.at(1),
-            secondKey: data.at(2),
-            body: data.at(3),
-          });
+      const callOp = generateCallOp(input);
+
+      if (callOp) {
+        const data = (callOp.calls.at(0) as { contract_input: { data: MethodArguments } })?.contract_input?.data;
+        if (data) {
+          setClaimPreview({ handler: data[0], firstKey: data[1], secondKey: data[2], body: data[3] });
         }
-      });
+      }
     }
   };
 
   const generateCallOpClaimPreview = useCallback(
     pDebounce(async (input: string) => {
       if (input) {
-        prepareCallOpPreview(input);
+        await prepareCallOpPreview(input);
         prepareClaimPreview(input);
       } else {
         setClaimPreview({ ...EMPTY_CLAIM, handler: 'DEFAULT' });
@@ -67,7 +62,7 @@ function StringProcessorQRCode() {
 
   useEffect(() => {
     // generate QR code
-    Promise.resolve()
+    void Promise.resolve()
       .then(() => {
         setLoadingQrCode(true);
       })

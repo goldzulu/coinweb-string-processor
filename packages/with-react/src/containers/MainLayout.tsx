@@ -91,20 +91,20 @@ const MainLayout = () => {
       <Footer>
         <Flex align="center" vertical={true} gap="small">
           <div>
-            API endpoint: {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            <a href={(window as any).__API_URL__} target="_blank" rel="noreferrer noopener">
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {(window as any).__API_URL__}
+            API endpoint: {}
+            <a href={(window as CustomWindow).__API_URL__} target="_blank" rel="noreferrer noopener">
+              {}
+              {(window as CustomWindow).__API_URL__}
             </a>
           </div>
           <div>
             String Processor Contract ID:{' '}
             <Tag
               style={{ cursor: 'pointer' }}
-              onClick={() => {
+              onClick={async () => {
                 if (stringReverserContractId) {
-                  navigator.clipboard.writeText(stringReverserContractId);
-                  message.success('Copied smart contract ID to clipboard');
+                  await navigator.clipboard.writeText(stringReverserContractId);
+                  await message.success('Copied smart contract ID to clipboard');
                 }
               }}
             >

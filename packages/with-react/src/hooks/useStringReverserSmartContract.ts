@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import * as api from 'string-processor.cm';
 import type { FetchedClaim } from 'string-processor.cm';
 import { EMPTY_CLAIM } from '../constants';
-import type { CustomUiCommand, L2TransactionData } from '@coinweb/wallet-lib';
+import type { L2TransactionData } from '@coinweb/wallet-lib';
 
 export const useStringReverserSmartContract = () => {
   const [methodHandler, setMethodHandler] = useState<string>();
@@ -11,7 +11,7 @@ export const useStringReverserSmartContract = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    api.getContractId().then((id) => setContractId(id));
+    setContractId(api.getContractId());
   }, []);
 
   const readClaims = async (input?: string) => {
@@ -28,12 +28,7 @@ export const useStringReverserSmartContract = () => {
 
   const generateCallOp = useCallback(
     (input: string) => {
-      try {
-        return api.generateCallOp(input, methodHandler);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error(error);
-      }
+      return api.generateCallOp(input, methodHandler);
     },
     [methodHandler]
   );
@@ -44,8 +39,8 @@ export const useStringReverserSmartContract = () => {
     }
 
     try {
-      const callOp = await generateCallOp(input);
-      return api.prepareTransaction(callOp as CustomUiCommand);
+      const callOp = generateCallOp(input);
+      return api.prepareTransaction(callOp);
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(error);

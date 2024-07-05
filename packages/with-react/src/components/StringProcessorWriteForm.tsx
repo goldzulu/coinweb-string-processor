@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import pDebounce from 'p-debounce';
 import { Collapse, Button, Form, Input, Row, Col, Descriptions, Select, message } from 'antd';
-import type { FetchedClaim } from 'string-processor.cm';
 import { TOGGLE_CASER, REVERSER, DEFAULT_HANDLER_NAME, STRING_PROCESSOR_TABLE } from 'string-processor.cm';
+import type { FetchedClaim, MethodArguments } from 'string-processor.cm';
 import type { CustomUiCommand, L2TransactionData, WalletError } from '@coinweb/wallet-lib';
 import CoinwebClaim from './CoinwebClaim';
 import HighlightCodeBlock from './HighlightCodeBlock';
@@ -42,37 +42,32 @@ function StringProcessorWriteForm({ withMethodHandlerSelector }: { withMethodHan
   );
 
   const generateCallOpPreview = useCallback(
-    pDebounce(async (input: string) => {
-      await generateCallOp(input)?.then((callOp) => {
-        if (callOp) setCallOpPreview(callOp);
-      });
+    pDebounce((input: string) => {
+      const callOp = generateCallOp(input);
+      if (callOp) setCallOpPreview(callOp);
     }, 150),
     [methodHandler]
   );
 
   const generateClaimPreview = useCallback(
-    pDebounce(async (input: string) => {
-      await generateCallOp(input)?.then((callOp) => {
-        if (callOp) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const { data } = (callOp.calls.at(0) as { contract_input: { data: any[] } })?.contract_input || {};
-          setClaimPreview({
-            handler: data.at(0),
-            firstKey: data.at(1),
-            secondKey: data.at(2),
-            body: data.at(3),
-          });
+    pDebounce((input: string) => {
+      const callOp = generateCallOp(input);
+
+      if (callOp) {
+        const data = (callOp.calls.at(0) as { contract_input: { data: MethodArguments } })?.contract_input?.data;
+        if (data) {
+          setClaimPreview({ handler: data[0], firstKey: data[1], secondKey: data[2], body: data[3] });
         }
-      });
+      }
     }, 150),
     [methodHandler]
   );
 
-  const generateCallOpClaimPreview = async (input: string) => {
+  const generateCallOpClaimPreview = (input: string) => {
     if (input) {
-      generateTransactionPreview(input);
-      generateCallOpPreview(input);
-      generateClaimPreview(input);
+      void generateTransactionPreview(input);
+      void generateCallOpPreview(input);
+      void generateClaimPreview(input);
     } else {
       setClaimPreview({
         ...EMPTY_CLAIM,
@@ -94,15 +89,15 @@ function StringProcessorWriteForm({ withMethodHandlerSelector }: { withMethodHan
       })
       .then((embedId) => {
         closeLoadingMessage();
-        message.success({ content: <EmbedSuccessMessage embedId={embedId} />, duration: 6 });
+        void message.success({ content: <EmbedSuccessMessage embedId={embedId} />, duration: 6 });
         setEmbedId(embedId);
         return embedId;
       })
       .catch((error: WalletError) => {
         closeLoadingMessage();
         Object.entries(error).forEach(([descriptor, error]) => {
-          const errorMessage = descriptor.concat(': ', error.error || error);
-          message.error({ content: <div style={{ maxWidth: '500px' }}>{errorMessage}</div>, duration: 10 });
+          const errorMessage = descriptor.concat(': ', error as string);
+          void message.error({ content: <div style={{ maxWidth: '500px' }}>{errorMessage}</div>, duration: 10 });
         });
       });
   };
@@ -128,7 +123,7 @@ function StringProcessorWriteForm({ withMethodHandlerSelector }: { withMethodHan
           >
             <Input
               value={stringToBeProcessed}
-              onChange={async (e) => {
+              onChange={(e) => {
                 setStringToBeProcessed(e.target.value);
               }}
             />

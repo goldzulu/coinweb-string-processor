@@ -52,7 +52,7 @@ contract ID state correctly.
     const App = () => {
       const [contractId, setContractId] = useState();
       useEffect(() => {
-        getContractId().then((id) => setContractId(id));
+        setContractId(getContractId());
       }, []);
 
       const claimFilterQuery = `query {
@@ -82,6 +82,7 @@ contract ID state correctly.
         <ApolloExplorer
           className="appollo-ide-explorer"
           graphRef="acephei@current"
+          // eslint-disable-next-line
           endpointUrl={window.__API_URL__}
           initialState={{
             document: claimFilterQuery,
