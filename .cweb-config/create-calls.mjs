@@ -20,7 +20,6 @@ const extendedSchema = yaml.DEFAULT_SCHEMA.extend([
         console.log("Did you forget to build your contract modules?");
         console.log("Run \x1b[36myarn build\x1b[0m before deploying.");
         console.log("\n");
-
         console.error(error);
         process.exit(-1);
       }
@@ -29,15 +28,10 @@ const extendedSchema = yaml.DEFAULT_SCHEMA.extend([
 ]);
 
 const callsTemplateJSON = yaml.load(
-  fsSync.readFileSync(
-    path.join(workdirPath, "/.cweb-config/calls-template.yaml"),
-    "utf8"
-  ),
+  fsSync.readFileSync(path.join(workdirPath, "/.cweb-config/calls-template.yaml"), "utf8"),
   { schema: extendedSchema }
 );
 
-fsSync.writeFileSync(
-  path.join(workdirPath, "/.cweb-config/calls.yaml"),
-  yaml.dump(callsTemplateJSON),
-  { encoding: "utf8" }
-);
+fsSync.writeFileSync(path.join(workdirPath, "/.cweb-config/calls.yaml"), yaml.dump(callsTemplateJSON), {
+  encoding: "utf8",
+});

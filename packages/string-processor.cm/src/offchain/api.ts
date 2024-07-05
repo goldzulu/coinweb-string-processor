@@ -100,7 +100,7 @@ export const prepareWallet = async (network): Promise<CwebWallet.Wallet> => {
   const signCallback: CwebWallet.SignCallback = (msg: Uint8Array) => CwebWallet.sign(privateKey, msg);
   const walletConfig: CwebWallet.WalletConfig = {
     address: DEV_COINWEB_ENDPOINT,
-    ws_address: "ws://coinweb-experimental-bitcoin-graphql-devnet.coinz.team/wallet",
+    ws_address: DEV_COINWEB_ENDPOINT.replace(/^http/, "ws"),
     pub_key: Buffer.from(publicKey).toString("hex"),
     sign_callback: signCallback,
     shard: network,
