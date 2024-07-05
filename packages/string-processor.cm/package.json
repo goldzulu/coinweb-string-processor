@@ -28,7 +28,7 @@
   },
   "main": "dist/out/cweb_dist/offchain/index.js",
   "engines": {
-    "cweb_interpreter": "08d22589d92093f8cc56922a7d00d8227d4c9247e4f55672d2dca613a66b52c9"
+    "cweb_interpreter": "550d8ed63bfa58809cd2079cb7dda107626b8d74fcbbc65be7fd52e0926a3ea6"
   },
   "devDependencies": {
     "@types/create-hmac": "^1.1.3",

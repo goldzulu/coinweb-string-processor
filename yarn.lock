@@ -1297,7 +1297,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coinweb/contract-kit@npm:^0.1.4, @coinweb/contract-kit@npm:^0.1.5, @coinweb/contract-kit@npm:^0.1.7":
+"@coinweb/contract-kit@npm:^0.1.4, @coinweb/contract-kit@npm:^0.1.7":
   version: 0.1.7
   resolution: "@coinweb/contract-kit@npm:0.1.7"
   checksum: 10c0/cedbaae80d1528ded8cfe43335b4950fd2cc4b4bb517eb5b55a159ef4287c4fb43a071cf68b95f67df6d5bad2a20124f40a2f0915103289592c22b78a4fc44b0
@@ -1373,16 +1373,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coinweb/self-register@npm:0.1.1":
-  version: 0.1.1
-  resolution: "@coinweb/self-register@npm:0.1.1"
+"@coinweb/self-register@npm:0.1.3":
+  version: 0.1.3
+  resolution: "@coinweb/self-register@npm:0.1.3"
   dependencies:
     "@babel/polyfill": "npm:^7.12.1"
     "@coinweb/base64-polyfill": "npm:^0.0.2"
-    "@coinweb/contract-kit": "npm:^0.1.5"
-    "@noble/hashes": "npm:^1.3.2"
+    "@coinweb/contract-kit": "npm:^0.1.7"
+    "@noble/hashes": "npm:^1.4.0"
     text-encoding: "npm:^0.7.0"
-  checksum: 10c0/e9ab037ce7981dcd94f251c94bb40f1b5ac02618d7e4221ee7f64ccc84e09e772eb5af960d222b8abc3f64c0c91114518a748483a0d9f2f86cb08ad840774bd9
+  checksum: 10c0/789fdc56e69947f11fa837597eabc9e330243b98bbc0bc010f3697f80101555f20787ba9adf7cff91efba9c3cb0f007d995be0d9fb3b015abb42233b8090b84f
   languageName: node
   linkType: hard
 
@@ -2152,7 +2152,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:^1.2.0, @noble/hashes@npm:^1.3.2, @noble/hashes@npm:^1.3.3":
+"@noble/hashes@npm:^1.2.0, @noble/hashes@npm:^1.3.3, @noble/hashes@npm:^1.4.0":
   version: 1.4.0
   resolution: "@noble/hashes@npm:1.4.0"
   checksum: 10c0/8c3f005ee72e7b8f9cff756dfae1241485187254e3f743873e22073d63906863df5d4f13d441b7530ea614b7a093f0d889309f28b59850f33b66cb26a779a4a5
